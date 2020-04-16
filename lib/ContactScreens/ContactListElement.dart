@@ -2,12 +2,12 @@ import 'package:firebase_database/firebase_database.dart';
 class ContactListElement{
   String name;
   String sub;
-  String phno1;
-  String phno2;
+  String office;
+  String residence;
   String email;
-  ContactListElement({this.name,this.sub,this.email,this.phno1,this.phno2});
+  ContactListElement({this.name,this.sub,this.email,this.office,this.residence});
   factory ContactListElement.fromJson(Map<dynamic,dynamic> parsedJson){
-    return ContactListElement(name: parsedJson['name'],sub: parsedJson['sub'],email: parsedJson['email'],phno1: parsedJson['contact1'],phno2: parsedJson['contact2']);
+    return ContactListElement(name: parsedJson['name'],sub: parsedJson['sub'],email: parsedJson['email'],office: parsedJson['office'],residence: parsedJson['residence']);
 
   }
 }

@@ -1,3 +1,4 @@
+import 'package:campusbuddy/ContactScreens/ContactList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,7 +13,8 @@ class Contact extends StatefulWidget {
   _ContactState createState() => _ContactState();
 }
 class _ContactState extends State<Contact> {
-  List<String> phno=["hello","bye","hey","due"];
+  List<String> emailAndPhoneNo=[];
+  List<String> subHeadings=[];
   final Widget svgIcon = SvgPicture.asset(
       Contact.assetName,
       color: Colors.white,
@@ -27,6 +29,13 @@ class _ContactState extends State<Contact> {
   );
   @override
   Widget build(BuildContext context) {
+    final PassToContact pass = ModalRoute.of(context).settings.arguments;
+   if(pass.office!="") {emailAndPhoneNo.add(pass.office);
+    subHeadings.add("Office | Main");}
+   if(pass.residence!=""){ emailAndPhoneNo.add(pass.residence);
+    subHeadings.add("Residence | Main");}
+    if(pass.email!=""){emailAndPhoneNo.add(pass.email);
+    subHeadings.add("IITR Email");}
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Contact.color,
@@ -61,7 +70,7 @@ class _ContactState extends State<Contact> {
             SizedBox(
               height: 9.2,
             ),
-              Text(Contact.name,
+              Text(pass.name,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 17.2,
@@ -70,7 +79,7 @@ class _ContactState extends State<Contact> {
               SizedBox(
                 height: 20,
               ),
-              Text(Contact.department,
+              Text(pass.department,
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 17.2
@@ -78,7 +87,7 @@ class _ContactState extends State<Contact> {
               SizedBox(
                 height: 22,
               ),
-              Text(Contact.sub,
+              Text(pass.sub,
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 17.2
@@ -95,7 +104,7 @@ class _ContactState extends State<Contact> {
           padding: EdgeInsets.fromLTRB(13.5, 8.5, 13.5, 0),
           child:  new ListView.builder
             (
-              itemCount: phno.length,
+              itemCount: emailAndPhoneNo.length,
               itemBuilder: (BuildContext context, int index) {
                 return new Card(
                   child:Padding(
@@ -104,7 +113,7 @@ class _ContactState extends State<Contact> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(phno[index]
+                        Text(emailAndPhoneNo[index]
                         ,
                         style: TextStyle(
                           color: Colors.black,
@@ -113,7 +122,7 @@ class _ContactState extends State<Contact> {
                         SizedBox(
                           height: 5.25,
                         ),
-                        Text(Contact.typeOfCall, style: TextStyle(
+                        Text(subHeadings[index], style: TextStyle(
                           color: Colors.black38,
                           fontSize: 17.52
                         ),),

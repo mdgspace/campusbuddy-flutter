@@ -106,6 +106,10 @@ class _ContactListState extends State<ContactList> {
                                 IconButton(
                                   icon: Icon(Icons.arrow_right),
                                   onPressed: () {
+                                    print(snapshot.data[index].name);
+                                    print("hello");
+                                    PassToContact pass=new PassToContact(snapshot.data[index].office.toString(),snapshot.data[index].email.toString(),snapshot.data[index].residence.toString(),snapshot.data[index].name.toString(),snapshot.data[index].sub.toString(),title);
+                                Navigator.pushNamed(context, '/Contact',arguments: pass);
                                   },
                                 )
                               ],
@@ -125,8 +129,13 @@ class _ContactListState extends State<ContactList> {
       });
   @override
   Widget build(BuildContext context) {
+    print("heelo");
     return Scaffold(
       body:futureBuilder,
     );
   }
+}
+class PassToContact{
+  String office,email,residence,name,sub,department;
+  PassToContact(this.office,this.email,this.residence,this.name,this.sub,this.department);
 }
