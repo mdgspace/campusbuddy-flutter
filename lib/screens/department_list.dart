@@ -5,12 +5,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DepartmentListPage extends StatelessWidget {
-  // Title of the screen
+  // Name of the group
   final title;
-  // Doc ID of current area
-  final areaDocID;
+  // Doc ID of current group
+  final groupDocID;
 
-  DepartmentListPage({Key key, this.title, this.areaDocID}) : super(key: key);
+  DepartmentListPage({Key key, this.title, this.groupDocID}) : super(key: key);
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Card(
@@ -64,17 +64,16 @@ class DepartmentListPage extends StatelessWidget {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              // TODO: Add proper padding to prevent overflow
               title: Text(
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: MediaQuery.of(context).size.width / 28,
                 ),
               ),
               background: Padding(
-                padding: EdgeInsets.all(70),
+                padding: EdgeInsets.fromLTRB(0, 60, 0, 70),
                 child: SvgPicture.asset(
                   'assets/department_icon.svg',
                   color: Colors.white,
@@ -85,7 +84,7 @@ class DepartmentListPage extends StatelessWidget {
           ),
           StreamBuilder<QuerySnapshot>(
             stream: Firestore.instance
-                .collection('directory/$areaDocID/department_list')
+                .collection('groups/$groupDocID/departments')
                 .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
