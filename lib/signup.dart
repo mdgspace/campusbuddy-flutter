@@ -29,6 +29,7 @@ class _SignupPageState extends State<SignupPage> {
   String _password='';
   String passwordLengthError='';
   String invalidEmailError='';
+  String gsuiteEmailError='';
 
 
   bool validateAndSave() {
@@ -258,26 +259,39 @@ class _SignupPageState extends State<SignupPage> {
                 setState(() {
                   passwordLengthError='';
                   invalidEmailError='';
+                  gsuiteEmailError='';
                 });
 
                 if(EmailValidator.validate(_email))
                   {
-                    if(_password.length>=6)
+                    if(_email.contains('iitr.ac.in'))
                       {
-                        validateAndSubmit();
+                        if(_password.length>=6)
+                        {
+                          validateAndSubmit();
+                        }
+                        else
+                        {
+                          setState(() {
+                            passwordLengthError=UNACCEPTABLE_PASSWORD;
+                            invalidEmailError='';
+
+                          });
+                        }
                       }
                     else
                       {
-                        setState(() {
-                           passwordLengthError=UNACCEPTABLE_PASSWORD;
-                           invalidEmailError='';
-
-                        });
+                         setState(() {
+                          invalidEmailError=GSUITE_ERROR;
+                           if(_password.length<6)
+                             {
+                               passwordLengthError=UNACCEPTABLE_PASSWORD;
+                             }
+                         });
                       }
                   }
                 else
                   {
-
                     setState(() {
                       invalidEmailError=UNACCEPTABLE_EMAIL;
                       if(_password.length<6)

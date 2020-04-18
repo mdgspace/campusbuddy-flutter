@@ -18,6 +18,7 @@ const String CONTINUE='CONTINUE';
 const String UNACCEPTABLE_PASSWORD='Password not acceptable';
 const String UNACCEPTABLE_EMAIL='Email not acceptable';
 const String SIGNUP_SUCCESSFUL='Signed Up successfully !';
+const String GSUITE_ERROR='Use your institute gsuite email id';
 
 
 //telephone directory
