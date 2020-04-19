@@ -1,5 +1,5 @@
-import 'package:campusbuddy/globals.dart';
-import 'package:campusbuddy/root_page.dart';
+import 'globals.dart';
+import 'root_page.dart';
 import 'package:flutter/material.dart';
 import 'auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
