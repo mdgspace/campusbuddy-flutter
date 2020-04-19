@@ -2,33 +2,33 @@ import 'package:campusbuddy/ContactScreens/ContactList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:campusbuddy/ContactScreens/ContactListElement.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 class Contact extends StatefulWidget {
- static String sub="sub",department="Biotechnology",name="Name",typeOfCall="type | of call ";
-  static Color color = const Color(0xFF303E84);
+  static Color color= Colors.indigo[900];
   static String assetName = 'assets/contactPerson.svg';
   static String assetNameAdd = 'assets/addContact.svg';
   @override
   _ContactState createState() => _ContactState();
 }
 class _ContactState extends State<Contact> {
+
   List<String> emailAndPhoneNo=[];
   List<String> subHeadings=[];
   final Widget svgIcon = SvgPicture.asset(
       Contact.assetName,
       color: Colors.white,
-      width: 42,
-      height: 42,
+      width: 42.w,
+      height: 42.h,
   );
   final Widget svgIconAdd = SvgPicture.asset(
       Contact.assetNameAdd,
       color: Colors.white,
-      width: 42,
-      height: 42,
+      width: 42.w,
+      height: 42.h,
   );
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context,allowFontScaling: true, width: 410, height: 703);
     final PassToContact pass = ModalRoute.of(context).settings.arguments;
    if(pass.office!="") {emailAndPhoneNo.add(pass.office);
     subHeadings.add("Office | Main");}
@@ -63,37 +63,37 @@ class _ContactState extends State<Contact> {
                     child: svgIcon),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
-                    border: Border.all(width: 4, color: Colors.white),
+                    border: Border.all(width: 4.w, color: Colors.white),
                   color: Contact.color,
                 ),
               ),
             SizedBox(
-              height: 9.2,
+              height: 9.2.h,
             ),
               Text(pass.name,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 17.2,
+                fontSize: ScreenUtil().setSp(20),
                 fontWeight: FontWeight.bold,
               ),),
               SizedBox(
-                height: 20,
+                height: 20.h,
               ),
               Text(pass.department,
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: 17.2
+                    fontSize: ScreenUtil().setSp(17)
                 ),),
               SizedBox(
-                height: 22,
+                height: 22.h,
               ),
               Text(pass.sub,
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: 17.2
+                    fontSize: ScreenUtil().setSp(17)
                 ),)
              , SizedBox(
-                height: 9,
+                height: 9.h,
               ),
             ],
           ),
@@ -117,14 +117,14 @@ class _ContactState extends State<Contact> {
                         ,
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 20
+                          fontSize: ScreenUtil().setSp(20)
                         ),),
                         SizedBox(
-                          height: 5.25,
+                          height: 5.25.h,
                         ),
                         Text(subHeadings[index], style: TextStyle(
                           color: Colors.black38,
-                          fontSize: 17.52
+                          fontSize: ScreenUtil().setSp(17.52)
                         ),),
                       ],
                     ),
