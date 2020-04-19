@@ -6,7 +6,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:campusbuddy/ContactScreens/ContactListElement.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ContactList extends StatefulWidget {
-  static Color color = const Color(0xff303e84);
+  static Color colors = const Color(0xff303e84);
+  static Color color= Colors.indigo[900];
   static String assetName = 'assets/contactPerson.svg';
   static String assetNameAcad = 'assets/acad.svg';
   static String assetNameArrow = 'assets/arrow.svg';

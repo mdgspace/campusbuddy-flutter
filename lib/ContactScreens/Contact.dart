@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 class Contact extends StatefulWidget {
-  static Color color= const Color(0xff303e84);
+  static Color color= Colors.indigo[900];
   static String assetName = 'assets/contactPerson.svg';
   static String assetNameAdd = 'assets/addContact.svg';
   @override
