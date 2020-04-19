@@ -13,6 +13,7 @@ class Directory extends StatefulWidget {
 }
 
 class _DirectoryState extends State<Directory> {
+
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -54,7 +55,6 @@ class _DirectoryState extends State<Directory> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
-
       child: Scaffold(
         body: CustomScrollView(
 
@@ -99,28 +99,53 @@ class _DirectoryState extends State<Directory> {
           child: new TabBar(
 
             tabs: [
+
               InkWell(
-                  child: Container(
-                      width: 100,
-                      child: Tab(
-                        icon: new Icon(Icons.call),
-                        ),
+                child: Container(
+                  height: 50,
+                  child: Tab(
+                    child: Column(
+                        children: <Widget>[
+                          SizedBox(height: 5,),
+                          Icon(Icons.phone),
+                          Text("Contacts",style: TextStyle(fontFamily: 'Roboto'),)
+                        ],
+                      ),
+                    ),
                   ),
               ),
             InkWell(
+              onTap: (){
+                Navigator.pushNamed(context, '/blank');
+                },
               child: Container(
-                width: 100,
+                height: 50,
                 child: Tab(
-                  icon: new Icon(Icons.notifications_active),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 5,),
+                      Icon(Icons.notifications_active),
+                      Text("Notices",style: TextStyle(fontFamily: 'Roboto'),)
+                    ],
+                  ),
                 ),
               ),
             ),
 
             InkWell(
+              onTap: (){
+                Navigator.pushNamed(context, '/blank', );
+              },
               child: Container(
-                width: 100,
+                height: 50,
                 child: Tab(
-                  icon: new Icon(Icons.more_horiz),
+                  child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 5,),
+                        Icon(Icons.more_horiz),
+                        Text("More",style: TextStyle(fontFamily: 'Roboto'),)
+                      ],
+                    ),
                 ),
               ),
             )
@@ -131,7 +156,7 @@ class _DirectoryState extends State<Directory> {
             ),
             isScrollable: false,
             indicatorSize: TabBarIndicatorSize.tab,
-            indicatorPadding: EdgeInsets.all(5.0),
+           // indicatorPadding: EdgeInsets.all(2.0),
 
           ),
         ),
