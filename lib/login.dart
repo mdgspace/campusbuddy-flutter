@@ -69,7 +69,7 @@ class _LoginState extends State<Login> {
       } catch (e) {
         print('Error: $e');
         Fluttertoast.showToast(
-            msg:NO_USER_ERROR,
+            msg:INCORRECT_USER_PASSWORD,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 2,
@@ -103,7 +103,14 @@ class _LoginState extends State<Login> {
       child: Stack(
         children: <Widget>[
              _showForm(),
-          showCircularProgress(),
+              showCircularProgress(),
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+               child: showMDG(),
+            ),
+          )
+
         ],
 
       ),
@@ -230,7 +237,7 @@ class _LoginState extends State<Login> {
        margin: EdgeInsets.only(left: ScreenUtil().setWidth(120),
                      right: ScreenUtil().setWidth(120),
                      top: ScreenUtil().setWidth(45),
-                     bottom: ScreenUtil().setWidth(70)),
+                     bottom: ScreenUtil().setWidth(50)),
         child: SizedBox(
           //height: 45.0,
           child: new FlatButton(
@@ -393,6 +400,7 @@ class _LoginState extends State<Login> {
                             style: GoogleFonts.poppins(
                                 textStyle: new TextStyle(
                                   color:Color(0xFF303E84),
+                                  fontWeight: FontWeight.w600,
                                   fontSize: ScreenUtil()
                                       .setSp(16, allowFontScalingSelf: true),
                                 )),
@@ -401,7 +409,10 @@ class _LoginState extends State<Login> {
                     Align(
                       alignment: Alignment.center,
                       child:Padding(
-                          padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
+                          padding: EdgeInsets.only(top:ScreenUtil().setWidth(10),
+                          bottom: ScreenUtil().setWidth(10),
+                          right: ScreenUtil().setWidth(40),
+                          left: ScreenUtil().setWidth(40)),
                           child: new TextFormField(
                              style: TextStyle(
                                color:  Color(0xFF303E84),
@@ -537,6 +548,47 @@ class _LoginState extends State<Login> {
             ),
           );
         });
+  }
+
+  Widget showMDG()
+  {
+    return Align(
+      alignment: Alignment.bottomCenter,
+    child: Container(
+     child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            child: Text(
+              MADE_WITH,
+              style: GoogleFonts.roboto(
+                textStyle: TextStyle(
+                  fontSize: ScreenUtil().setSp(14,allowFontScalingSelf: true),
+                  color:Colors.white,
+                )
+              ),
+            ),
+          ),
+          Container(
+            child:  new SvgPicture.asset(
+              'assets/love.svg',
+              allowDrawingOutsideViewBox: true,
+            ),
+          ),
+          Container(
+            child: Text(
+             BY_MDG,
+              style: GoogleFonts.roboto(
+                  textStyle: TextStyle(
+                    fontSize: ScreenUtil().setSp(14,allowFontScalingSelf: true),
+                    color:Colors.white,
+                  )
+              ),
+            ),
+          ),
+
+        ],
+     )));
   }
 
 }

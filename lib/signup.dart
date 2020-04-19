@@ -98,6 +98,12 @@ class _SignupPageState extends State<SignupPage> {
             children: <Widget>[
               _showForm(),
               showCircularProgress(),
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: showMDG(),
+                ),
+              )
             ],
 
           ),
@@ -482,5 +488,46 @@ class _SignupPageState extends State<SignupPage> {
       );
     });
 
+  }
+
+  Widget showMDG()
+  {
+    return Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  child: Text(
+                    MADE_WITH,
+                    style: GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                          fontSize: ScreenUtil().setSp(14,allowFontScalingSelf: true),
+                          color:Colors.white,
+                        )
+                    ),
+                  ),
+                ),
+                Container(
+                  child:  new SvgPicture.asset(
+                    'assets/love.svg',
+                    allowDrawingOutsideViewBox: true,
+                  ),
+                ),
+                Container(
+                  child: Text(
+                    BY_MDG,
+                    style: GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                          fontSize: ScreenUtil().setSp(14,allowFontScalingSelf: true),
+                          color:Colors.white,
+                        )
+                    ),
+                  ),
+                ),
+
+              ],
+            )));
   }
 }
