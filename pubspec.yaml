@@ -18,6 +18,7 @@ environment:
 
 dependencies:
   loading_animations: "^2.1.0"
+  flutter_screenutil: ^1.1.0
   firebase_core: ^0.4.0+9
   flutter_svg: ^0.17.4
   flutter:
