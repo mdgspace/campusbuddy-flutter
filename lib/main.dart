@@ -1,13 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:campusbuddy/Directory/Directory.dart';
-
-void main() => runApp(MaterialApp(
+import 'package:campusbuddy/Blank.dart';
+void main() => runApp(MyApp());
+ /* void main() => runApp(MaterialApp(
 
     initialRoute: '/',
     routes: {
       '/': (context) => Directory(),
-      //'/home': (context) => Home(),
+
+      '/blank': (context) => Blank(),
 
     }
 ));
+*/
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        initialRoute: '/',
+        routes: {
+          '/': (context) => Directory(),
+
+          '/blank': (context) => Blank(),
+
+        }
+    );
+  }
+}
 
