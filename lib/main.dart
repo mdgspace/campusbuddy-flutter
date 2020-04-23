@@ -1,29 +1,22 @@
-import 'package:campusbuddy/ContactScreens/Contact.dart';
-import 'package:campusbuddy/ContactScreens/ContactList.dart';
+
 import 'package:flutter/material.dart';
+import 'auth/root_page.dart';
+import 'auth/auth.dart';
 
-void main() => runApp(MainScreen());
-class MainScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-    initialRoute:  '/ContactList'
-    ,
-      routes:{
-      '/Contact':(context)=>Contact(),
-        '/ContactList' : (context) => ContactList(),
-      },
-    );
-  }
-}
-class MainWidget extends StatelessWidget {
-  Contact instance=new Contact();
-  ContactList instance2=new ContactList();
-  @override
-  Widget build(BuildContext context) {
-    return instance2;
-
-  }
+void main() {
+  runApp(new MyApp());
 }
 
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+        title: 'Campus Buddy',
+        debugShowCheckedModeBanner: false,
+        theme: new ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: new RootPage(auth: new Auth()));
+  }
+}
 
