@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'auth/root_page.dart';
 import 'auth/auth.dart';
@@ -5,7 +6,6 @@ import 'auth/auth.dart';
 void main() {
   runApp(new MyApp());
 }
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
