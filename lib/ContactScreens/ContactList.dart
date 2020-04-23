@@ -1,3 +1,4 @@
+import 'package:campusbuddy/ContactScreens/Contact.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animations/loading_animations.dart';
@@ -46,8 +47,8 @@ class _ContactListState extends State<ContactList> {
           case ConnectionState.none: return Text("INTERNET Not There");
           case ConnectionState.waiting: return Center(
             child: new LoadingBouncingGrid.square(
-              borderColor: Colors.cyan,
-              backgroundColor: Colors.blue,
+              borderColor: Colors.indigo[900],
+              backgroundColor: ContactList.color,
               duration: Duration(milliseconds: 400),
             ),
           );
