@@ -1,9 +1,11 @@
+import 'package:campusbuddy/Directory/DirectoryListWidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:campusbuddy/Blank.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'DirectoryListWidget.dart';
 
 class Directory extends StatefulWidget {
   Directory({Key key}) : super(key: key);
@@ -13,154 +15,78 @@ class Directory extends StatefulWidget {
 }
 
 class _DirectoryState extends State<Directory> {
+int _currentIndex=0;
+final _selectedBgColor = Colors.indigo[900];
+final _unselectedBgColor = Colors.indigo[700];
+final List<Widget> _children =[
+ DirectoryList(),
+  Blank(),
+  Blank()
+];
 
-  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      elevation: 3,
+void onTabTapped(int index){
+  setState(() {
+    _currentIndex=index;
+  });
+}
 
-      child: ListTile(
-          onTap: (){
-            Navigator.pushNamed(context, '/blank' );
-          },
-        contentPadding: EdgeInsets.all(10),
-        leading: SvgPicture.asset(
-          'assets/images/icon.svg',
-          color: Colors.indigo[800],
-        ),
-        trailing: Icon(
-          Icons.keyboard_arrow_right,
-          color: Colors.black,
-        ),
-        title: Text(
-          document['group_name'],
-          style: TextStyle( fontFamily:'Roboto',),
-        ),
-      ),
-    );
-  }
+Color _getBgColor(int index)=>
+    _currentIndex==index ? _selectedBgColor:_unselectedBgColor;
 
-  Widget _buildList(context, snapshot) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-            (context, index) {
-          return _buildListItem(context, snapshot.data.documents[index]);
-        },
-        childCount: snapshot.data.documents.length,
-      ),
-    );
-  }
+Widget _buildIcon(IconData iconData, String text, int index)=>
+    Container(
+       width: double.infinity,
+       height: kBottomNavigationBarHeight,
+       child: InkWell(
+         onTap: ()=>onTabTapped(index),
+         child: Material(
+          color: _getBgColor(index),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(iconData,color: Colors.white,),
+                Text(text,style: TextStyle(color: Colors.white,
+                    fontFamily: 'Roboto'))
+              ],
+            ),
+          ),
+       ),
+     );
+
+
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        body: CustomScrollView(
+    return
+      Scaffold(
 
-          slivers: <Widget>[
-            SliverAppBar(
-              backgroundColor: Colors.indigo[800],
-              title: Text("Telephone Directory"),
-              actions: <Widget>[
-                IconButton(
-                    tooltip: 'Search',
-                    icon: const Icon(Icons.search),
-                    onPressed: () async {
-                      //  final int selected = await showSearch<int>();
-                    }
+        body: _children[_currentIndex],
+        
+        bottomNavigationBar: SizedBox(
+          child: BottomNavigationBar(
+              selectedFontSize: 0,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              type: BottomNavigationBarType.fixed,
+              items: [
+                BottomNavigationBarItem(
+                    icon: _buildIcon(Icons.phone, 'Contacts', 0),
+                    title: SizedBox.shrink(),
                 ),
+                BottomNavigationBarItem(
+                  title: SizedBox.fromSize(),
+                  icon: _buildIcon(Icons.notifications_active, 'Notifications', 1)),
+                BottomNavigationBarItem(
+                  icon: _buildIcon(Icons.more_horiz, 'More', 2),
+                  title: SizedBox.fromSize(),
+                )
               ],
+            currentIndex: _currentIndex,
+            onTap: onTabTapped,
             ),
 
-            StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance
-                  .collection('groups')
-                  .snapshots(),
-              builder:
-                  (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                // TODO: Better way to represent errors
-                if (snapshot.hasError) return SliverFillRemaining();
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                  // TODO: Add loading bar
-                    return SliverFillRemaining();
-                  default:
-                    return _buildList(context, snapshot);
-                }
-              },
-            ),
+),
+      );
 
-          ],
-        ),
-        bottomNavigationBar: Material(
-          color: Colors.indigo[800],
-
-          child: new TabBar(
-
-            tabs: [
-
-              InkWell(
-                child: Container(
-                  height: 50,
-                  child: Tab(
-                    child: Column(
-                        children: <Widget>[
-                          SizedBox(height: 5,),
-                          Icon(Icons.phone),
-                          Text("Contacts",style: TextStyle(fontFamily: 'Roboto'),)
-                        ],
-                      ),
-                    ),
-                  ),
-              ),
-            InkWell(
-              onTap: (){
-                Navigator.pushNamed(context, '/blank');
-                },
-              child: Container(
-                height: 50,
-                child: Tab(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 5,),
-                      Icon(Icons.notifications_active),
-                      Text("Notices",style: TextStyle(fontFamily: 'Roboto'),)
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            InkWell(
-              onTap: (){
-                Navigator.pushNamed(context, '/blank', );
-              },
-              child: Container(
-                height: 50,
-                child: Tab(
-                  child: Column(
-                      children: <Widget>[
-                        SizedBox(height: 5,),
-                        Icon(Icons.more_horiz),
-                        Text("More",style: TextStyle(fontFamily: 'Roboto'),)
-                      ],
-                    ),
-                ),
-              ),
-            )
-          ],
-
-            indicator: BoxDecoration(
-              color: Colors.indigo[900],
-            ),
-            isScrollable: false,
-            indicatorSize: TabBarIndicatorSize.tab,
-           // indicatorPadding: EdgeInsets.all(2.0),
-
-          ),
-        ),
-      ),
-    );
   }
 }
