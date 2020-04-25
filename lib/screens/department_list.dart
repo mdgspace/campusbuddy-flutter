@@ -19,7 +19,6 @@ class DepartmentListPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-      elevation: 5,
       child: ListTile(
         contentPadding: EdgeInsets.all(10),
         leading: SvgPicture.asset(
@@ -91,9 +90,16 @@ class DepartmentListPage extends StatelessWidget {
               // TODO: Better way to represent errors
               if (snapshot.hasError) return SliverFillRemaining();
               switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  // TODO: Add loading bar
-                  return SliverFillRemaining();
+                case ConnectionState.none:
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      heightFactor: 10,
+                      widthFactor: 10,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(Colors.blue),
+                      ),
+                    ),
+                  );
                 default:
                   return _buildList(context, snapshot);
               }
