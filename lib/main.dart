@@ -1,31 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:campusbuddy/Directory/Directory.dart';
-import 'package:campusbuddy/Blank.dart';
-void main() => runApp(MyApp());
- /* void main() => runApp(MaterialApp(
+import 'auth/root_page.dart';
+import 'auth/auth.dart';
 
-    initialRoute: '/',
-    routes: {
-      '/': (context) => Directory(),
-
-      '/blank': (context) => Blank(),
-
-    }
-));
-*/
+void main() {
+  runApp(new MyApp());
+}
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        initialRoute: '/',
-        routes: {
-          '/': (context) => Directory(),
-
-          '/blank': (context) => Blank(),
-
-        }
-    );
-  }
+    return new MaterialApp(
+        title: 'Campus Buddy',
+        debugShowCheckedModeBanner: false,
+        theme: new ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: new RootPage(auth: new Auth()));
+ }
 }
 
