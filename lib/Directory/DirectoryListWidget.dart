@@ -79,10 +79,18 @@ class _DirectoryListState extends State<DirectoryList> {
             if (snapshot.hasError) return SliverFillRemaining();
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
-              // TODO: Add loading bar
-                return SliverFillRemaining();
+                return SliverToBoxAdapter(
+                  child: Center(
+                    heightFactor: 20,
+                    widthFactor: 10,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
+                    ),
+                  ),
+                );
               default:
-                return _buildList(context, snapshot);
+                return
+                  _buildList(context, snapshot);
             }
           },
         ),
