@@ -1,4 +1,5 @@
 
+import 'package:campusbuddy/Directory/DirectoryListWidget.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -11,6 +12,8 @@ import 'home_page.dart';
 import 'signup.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'globals.dart';
+import 'package:campusbuddy/Directory/Directory.dart';
+
 
 
 class Login extends StatefulWidget{
@@ -62,7 +65,7 @@ class _LoginState extends State<Login> {
         if ( userId != null && userId.length > 0) {
           widget.loginCallback();
           Navigator.pushAndRemoveUntil(context,
-              MaterialPageRoute(builder: (BuildContext context) => HomePage()),
+              MaterialPageRoute(builder: (BuildContext context) => Directory()),
               ModalRoute.withName('/'));
 
         }
