@@ -1,3 +1,5 @@
+import 'package:campusbuddy/Directory/Directory.dart';
+import 'package:campusbuddy/Directory/DirectoryListWidget.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'auth.dart';
@@ -79,7 +81,7 @@ class _RootPageState extends State<RootPage>
         break;
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
-          return new HomePage(
+          return new Directory(
           );
         } else
           return buildWaitingScreen();
