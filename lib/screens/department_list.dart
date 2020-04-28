@@ -5,12 +5,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DepartmentListPage extends StatelessWidget {
+  static const routeName = '/departments';
+
   // Name of the group
-  final title;
+  final groupName;
   // Doc ID of current group
   final groupDocID;
 
-  DepartmentListPage({Key key, this.title, this.groupDocID}) : super(key: key);
+  DepartmentListPage(
+      {Key key, @required this.groupName, @required this.groupDocID})
+      : super(key: key);
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Card(
@@ -20,6 +24,10 @@ class DepartmentListPage extends StatelessWidget {
       ),
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
       child: ListTile(
+        onTap: () => Navigator.of(context).pushNamed("/contacts", arguments: {
+          'dept_name': document['dept_name'],
+          'dept_id': document.documentID,
+        }),
         contentPadding: EdgeInsets.all(10),
         leading: SvgPicture.asset(
           'assets/department_icon.svg',
@@ -56,15 +64,18 @@ class DepartmentListPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            leading: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
             ),
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               title: Text(
-                title,
+                groupName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -87,22 +98,21 @@ class DepartmentListPage extends StatelessWidget {
                 .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              // TODO: Better way to represent errors
               if (snapshot.hasError) return SliverFillRemaining();
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                  return SliverToBoxAdapter(
-                    child: Center(
-                      heightFactor: 10,
-                      widthFactor: 10,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(Colors.blue),
-                      ),
+              if (snapshot.data == null ||
+                  snapshot.data.documents == null ||
+                  snapshot.data.documents.length == 0)
+                return SliverToBoxAdapter(
+                  child: Center(
+                    heightFactor: 10,
+                    widthFactor: 10,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(Colors.blue),
                     ),
-                  );
-                default:
-                  return _buildList(context, snapshot);
-              }
+                  ),
+                );
+              else
+                return _buildList(context, snapshot);
             },
           )
         ],

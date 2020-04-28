@@ -1,3 +1,4 @@
+import 'package:campusbuddy/generate_route.dart';
 import 'package:campusbuddy/screens/department_list.dart';
 import 'package:flutter/material.dart';
 import 'auth/root_page.dart';
