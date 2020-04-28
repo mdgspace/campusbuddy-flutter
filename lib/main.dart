@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'auth/root_page.dart';
 import 'auth/auth.dart';
@@ -15,7 +14,8 @@ class MyApp extends StatelessWidget {
         theme: new ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: new RootPage(auth: new Auth()));
+        home: new RootPage(auth: new Auth()),
+    );
+
   }
 }
-
