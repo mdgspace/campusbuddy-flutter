@@ -60,7 +60,8 @@ class _ContactState extends State<Contact> {
                 child:
                 Padding(
                     padding: EdgeInsets.all(10),
-                    child: svgIcon),
+                    child: svgIcon,
+                ),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
                     border: Border.all(width: 4.w, color: Colors.white),
@@ -75,7 +76,9 @@ class _ContactState extends State<Contact> {
                 color: Colors.white,
                 fontSize: ScreenUtil().setSp(20),
                 fontWeight: FontWeight.bold,
-              ),),
+              ),
+              textAlign: TextAlign.center,
+              ),
               SizedBox(
                 height: 20.h,
               ),
