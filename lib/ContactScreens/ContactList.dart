@@ -11,13 +11,13 @@ class ContactList extends StatelessWidget {
   static String assetNameArrow = 'assets/arrow.svg';
   static String title="BioTechnology";
   static Widget svgIcon = SvgPicture.asset(
-      ContactList.assetName,
-      color: ContactList.color,
+      assetName,
+      color: color,
       width: 42.w,
       height: 42.h,
   );
   static Widget svgArrowIcon = SvgPicture.asset(
-    ContactList.assetNameArrow,
+    assetNameArrow,
     color: Color(0xff3B3B3B),
     width: 5.5.w,
     height: 11.3.h,
@@ -26,7 +26,7 @@ class ContactList extends StatelessWidget {
   static Widget svgIconAcad = Padding(
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child:SvgPicture.asset(
-      ContactList.assetNameAcad,
+      assetNameAcad,
       color: Colors.white,
       width: 42.w,
       height: 42.h,
@@ -51,7 +51,7 @@ class ContactList extends StatelessWidget {
           case ConnectionState.waiting: return Center(
             child: new LoadingBouncingGrid.square(
               borderColor: Colors.indigo[900],
-              backgroundColor: ContactList.color,
+              backgroundColor: color,
               duration: Duration(milliseconds: 400),
             ),
           );
@@ -66,7 +66,7 @@ class ContactList extends StatelessWidget {
                   pinned: true,
                   snap: true,
                   expandedHeight: 215.3.h,
-                  backgroundColor: ContactList.color,
+                  backgroundColor: color,
                   flexibleSpace:FlexibleSpaceBar(
                     centerTitle: true,
                     title: Text(
@@ -91,16 +91,7 @@ class ContactList extends StatelessWidget {
                             padding: EdgeInsets.fromLTRB(13.5, 8, 13.5, 0),
                           child: GestureDetector(
                             onTap: (){
-                              String office = "",email = "",residence = "",contactName = "";
-                              if(documents['office'].toString() != "[]"){
-                              office = documents['office'][0].toString();}
-                              if(documents['email'].toString() != "[]"){
-                              email = documents['email'][0].toString();}
-                              if(documents['residence'].toString() != "[]"){
-                              residence = documents['residence'][0].toString();}
-                              contactName = documents['contact_name'].toString();
-                              PassToContact pass = new PassToContact(office,email,residence,contactName,documents['designation'].toString(),title);
-                              Navigator.pushNamed(context, '/Contact',arguments: pass);
+                             _fillDetail(context, documents);
                             },
                             child: Card(
                               child: Row(
@@ -139,9 +130,7 @@ class ContactList extends StatelessWidget {
                                   IconButton(
                                     icon: svgArrowIcon,
                                     onPressed: () {
-                                      DocumentSnapshot documents=snapshot.data.documents[index];
-                                      PassToContact pass=new PassToContact(documents['office']['0'].toString(),documents['email']['0'].toString(),documents['residence']['0'].toString(),documents['contact_name'].toString(),documents['designation'].toString(),title);
-                                      Navigator.pushNamed(context, '/Contact',arguments: pass);
+                                     _fillDetail(context, documents);
                                     },
                                   )
                                 ],
@@ -166,6 +155,18 @@ class ContactList extends StatelessWidget {
     return Scaffold(
       body:futureBuilder,
     );
+  }
+  static void _fillDetail(context,DocumentSnapshot documents){
+    String office = "",email = "",residence = "",contactName = "";
+    if(documents['office'].toString() != "[]"){
+      office = documents['office'][0].toString();}
+    if(documents['email'].toString() != "[]"){
+      email = documents['email'][0].toString();}
+    if(documents['residence'].toString() != "[]"){
+      residence = documents['residence'][0].toString();}
+    contactName = documents['contact_name'].toString();
+    PassToContact pass = new PassToContact(office,email,residence,contactName,documents['designation'].toString(),title);
+    Navigator.pushNamed(context, '/Contact',arguments: pass);
   }
 }
 class PassToContact{

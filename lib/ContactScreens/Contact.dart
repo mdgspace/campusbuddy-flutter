@@ -1,27 +1,26 @@
 import 'package:campusbuddy/ContactScreens/ContactList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-class Contact extends StatefulWidget {
+
+class Contact extends StatelessWidget {
   static Color color= const Color(0xff303e84);
+  Future<void> _launched;
   static String assetName = 'assets/contactPerson.svg';
   static String assetNameAdd = 'assets/addContact.svg';
-  @override
-  _ContactState createState() => _ContactState();
-}
-class _ContactState extends State<Contact> {
-
   List<String> emailAndPhoneNo=[];
   List<String> subHeadings=[];
   final Widget svgIcon = SvgPicture.asset(
-      Contact.assetName,
+      assetName,
       color: Colors.white,
       width: 42.w,
       height: 42.h,
   );
   final Widget svgIconAdd = SvgPicture.asset(
-      Contact.assetNameAdd,
+      assetNameAdd,
       color: Colors.white,
       width: 42.w,
       height: 42.h,
@@ -34,16 +33,17 @@ class _ContactState extends State<Contact> {
     subHeadings.add("Office | Main");}
    if(pass.residence!=""){ emailAndPhoneNo.add(pass.residence);
     subHeadings.add("Residence | Main");}
-    if(pass.email!=""){emailAndPhoneNo.add(pass.email);
+    if(pass.email!=""){emailAndPhoneNo.add(pass.email+"@iitr.ac.in");
     subHeadings.add("IITR Email");}
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Contact.color,
+        backgroundColor: color,
         elevation: 0,
         actions: [
           IconButton(
             icon: svgIconAdd,
             onPressed: (){
+
             },
           )
         ],
@@ -51,7 +51,7 @@ class _ContactState extends State<Contact> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
       children: [Container(
-        color: Contact.color,
+        color: color,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -65,7 +65,7 @@ class _ContactState extends State<Contact> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
                     border: Border.all(width: 4.w, color: Colors.white),
-                  color: Contact.color,
+                  color: color,
                 ),
               ),
             SizedBox(
@@ -109,27 +109,38 @@ class _ContactState extends State<Contact> {
             (
               itemCount: emailAndPhoneNo.length,
               itemBuilder: (BuildContext context, int index) {
-                return new Card(
-                  child:Padding(
-                    padding: EdgeInsets.fromLTRB(12, 16, 0, 16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(emailAndPhoneNo[index]
-                        ,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: ScreenUtil().setSp(20)
-                        ),),
-                        SizedBox(
-                          height: 5.25.h,
-                        ),
-                        Text(subHeadings[index], style: TextStyle(
-                          color: Colors.black38,
-                          fontSize: ScreenUtil().setSp(17.52)
-                        ),),
-                      ],
+                return GestureDetector(
+                  onTap: (){
+                  if(subHeadings[index]=="IITR Email"){
+                  _makeEmail(emailAndPhoneNo[index]);
+                  }
+                  else{
+                    String tell=emailAndPhoneNo[index];
+                    _launched = _makePhoneCall('tel:$tell');
+                  }
+                  },
+                  child: new Card(
+                    child:Padding(
+                      padding: EdgeInsets.fromLTRB(12, 16, 0, 16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(emailAndPhoneNo[index]
+                          ,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: ScreenUtil().setSp(20)
+                          ),),
+                          SizedBox(
+                            height: 5.25.h,
+                          ),
+                          Text(subHeadings[index], style: TextStyle(
+                            color: Colors.black38,
+                            fontSize: ScreenUtil().setSp(17.52)
+                          ),),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -139,5 +150,27 @@ class _ContactState extends State<Contact> {
        ),]
     )
     );
+  }
+  Future<void> _makePhoneCall(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+  Future<void> _makeEmail(String url) async {
+    final Email email = Email(
+      recipients: ['$url'],
+      isHTML: false,
+    );
+    print("Sent");
+    String platformResponse;
+    try {
+      await FlutterEmailSender.send(email);
+      platformResponse = 'success';
+    } catch (error) {
+      platformResponse = error.toString();
+    }
+    print(platformResponse);
   }
 }
