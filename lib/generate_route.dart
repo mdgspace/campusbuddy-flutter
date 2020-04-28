@@ -1,3 +1,7 @@
+import 'package:campusbuddy/Blank.dart';
+import 'package:campusbuddy/Directory/Directory.dart';
+import 'package:campusbuddy/auth/auth.dart';
+import 'package:campusbuddy/auth/root_page.dart';
 import 'package:campusbuddy/screens/department_list.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +16,16 @@ class RouteGenerator {
             groupName: args['group_name'],
           ),
         );
+      case RootPage.routeName:
+        return MaterialPageRoute(
+          builder: (_) => RootPage(
+            auth: Auth(),
+          ),
+        );
+      case Directory.routeName:
+        return MaterialPageRoute(builder: (_) => Directory());
+      default:
+        return MaterialPageRoute(builder: (_) => Blank());
     }
   }
 }
