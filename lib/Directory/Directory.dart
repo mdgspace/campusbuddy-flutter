@@ -10,6 +10,8 @@ import 'DirectoryListWidget.dart';
 class Directory extends StatefulWidget {
   Directory({Key key}) : super(key: key);
 
+  static const routeName = "/directory";
+
   @override
   _DirectoryState createState() => _DirectoryState();
 }
