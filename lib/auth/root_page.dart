@@ -15,6 +15,7 @@ enum AuthStatus {
 class RootPage extends StatefulWidget {
   RootPage({Key key, this.auth}) : super(key: key);
 
+  static const routeName = "/";
   final Auth auth;
 
   @override
