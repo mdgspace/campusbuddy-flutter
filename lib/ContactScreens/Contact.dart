@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:io' show Platform;
 import 'package:campusbuddy/ContactScreens/ContactList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:android_intent/android_intent.dart';
 
 class Contact extends StatelessWidget {
   static Color color= const Color(0xff303e84);
