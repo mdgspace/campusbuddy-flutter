@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:io' show Platform;
 import 'package:campusbuddy/ContactScreens/ContactList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +5,14 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:android_intent/android_intent.dart';
 
 class Contact extends StatelessWidget {
-  static Color color = const Color(0xff303e84);
+  PassToContact passToContact;
+  static const routeName='/Contact';
+  static const Color color = const Color(0xff303e84);
   Future<void> _launched;
-  static String assetName = 'assets/contactPerson.svg';
-  static String assetNameAdd = 'assets/addContact.svg';
+  static const String assetName = 'assets/contactPerson.svg';
+  static const String assetNameAdd = 'assets/addContact.svg';
   List<String> emailAndPhoneNo = [];
   List<String> subHeadings = [];
   final Widget svgIcon = SvgPicture.asset(
@@ -31,17 +30,16 @@ class Contact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, allowFontScaling: true, width: 410, height: 703);
-    final PassToContact pass = ModalRoute.of(context).settings.arguments;
-    if (pass.office != "") {
-      emailAndPhoneNo.add(pass.office);
+    if (passToContact.office != "") {
+      emailAndPhoneNo.add(passToContact.office);
       subHeadings.add("Office | Main");
     }
-    if (pass.residence != "") {
-      emailAndPhoneNo.add(pass.residence);
+    if (passToContact.residence != "") {
+      emailAndPhoneNo.add(passToContact.residence);
       subHeadings.add("Residence | Main");
     }
-    if (pass.email != "") {
-      emailAndPhoneNo.add(pass.email + "@iitr.ac.in");
+    if (passToContact.email != "") {
+      emailAndPhoneNo.add(passToContact.email + "@iitr.ac.in");
       subHeadings.add("IITR Email");
     }
     return Scaffold(
@@ -77,7 +75,7 @@ class Contact extends StatelessWidget {
                     height: 9.2.h,
                   ),
                   Text(
-                    pass.name,
+                    passToContact.name,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: ScreenUtil().setSp(20),
@@ -89,7 +87,7 @@ class Contact extends StatelessWidget {
                     height: 20.h,
                   ),
                   Text(
-                    pass.department,
+                    passToContact.department,
                     style: TextStyle(
                         color: Colors.white, fontSize: ScreenUtil().setSp(17)),
                   ),
@@ -97,7 +95,7 @@ class Contact extends StatelessWidget {
                     height: 22.h,
                   ),
                   Text(
-                    pass.sub,
+                    passToContact.sub,
                     style: TextStyle(
                         color: Colors.white, fontSize: ScreenUtil().setSp(17)),
                   ),
@@ -169,7 +167,6 @@ class Contact extends StatelessWidget {
       recipients: ['$url'],
       isHTML: false,
     );
-    print("Sent");
     String platformResponse;
     try {
       await FlutterEmailSender.send(email);
@@ -177,6 +174,7 @@ class Contact extends StatelessWidget {
     } catch (error) {
       platformResponse = error.toString();
     }
-    print(platformResponse);
   }
+
+  Contact(this.passToContact);
 }

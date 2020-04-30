@@ -16,8 +16,5 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
     );
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 995c1f84cd6ec808804fb18aef8ab156dbb321a1
+
