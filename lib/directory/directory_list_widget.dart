@@ -2,7 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class DirectoryList extends StatefulWidget {
+import 'package:campusbuddy/directory/blank.dart';
+
+class DirectoryList extends StatefulWidget
+{
 
   @override
   _DirectoryListState createState() => _DirectoryListState();
@@ -19,7 +22,9 @@ class _DirectoryListState extends State<DirectoryList> {
       child: InkWell(
         child: ListTile(
           onTap: (){
-            Navigator.pushNamed(context, '/blank' );
+            Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) => Blank()),
+            );
           },
           contentPadding: EdgeInsets.all(10),
           leading: SvgPicture.asset(
@@ -81,8 +86,6 @@ class _DirectoryListState extends State<DirectoryList> {
               case ConnectionState.waiting:
                 return SliverToBoxAdapter(
                   child: Center(
-                    heightFactor: 20,
-                    widthFactor: 10,
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
                     ),

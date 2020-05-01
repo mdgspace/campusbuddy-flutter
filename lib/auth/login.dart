@@ -1,5 +1,5 @@
 
-import 'package:campusbuddy/Directory/DirectoryListWidget.dart';
+import 'package:campusbuddy/directory/directory_list_widget.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -12,7 +12,7 @@ import 'home_page.dart';
 import 'signup.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'globals.dart';
-import 'package:campusbuddy/Directory/Directory.dart';
+import 'package:campusbuddy/directory/directory.dart';
 
 
 

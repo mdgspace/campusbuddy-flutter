@@ -1,13 +1,13 @@
-import 'package:campusbuddy/Directory/DirectoryListWidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:campusbuddy/Blank.dart';
+import 'package:campusbuddy/directory/blank.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'DirectoryListWidget.dart';
-
-class Directory extends StatefulWidget {
+import 'package:campusbuddy/directory/directory_list_widget.dart';
+import 'package:campusbuddy/post_screen/post.dart';
+class Directory extends StatefulWidget
+{
   Directory({Key key}) : super(key: key);
 
   @override
@@ -20,7 +20,7 @@ final _selectedBgColor = Colors.indigo[900];
 final _unselectedBgColor = Colors.indigo[700];
 final List<Widget> _children =[
  DirectoryList(),
-  Blank(),
+ Post(),
   Blank()
 ];
 
