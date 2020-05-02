@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ContactList extends StatelessWidget {
-  static const routeName = '/ContactList';
+  static const routeName = '/contactList';
   static const Color color = const Color(0xff303e84);
   static const String assetName = 'assets/contactPerson.svg';
   static const String assetNameAcad = 'assets/acad.svg';
@@ -40,13 +40,13 @@ class ContactList extends StatelessWidget {
       :super(key:key);
  static void _fillDetail(context, DocumentSnapshot documents) {
     String office = "", email = "", residence = "", contactName = "";
-    if (documents['office'].toString() != "[]") {
+    if (documents['office'].length!=0) {
       office = documents['office'][0].toString();
     }
-    if (documents['email'].toString() != "[]") {
+    if (documents['email'].length!=0) {
       email = documents['email'][0].toString();
     }
-    if (documents['residence'].toString() != "[]") {
+    if (documents['residence'].length!=0) {
       residence = documents['residence'][0].toString();
     }
     contactName = documents['contact_name'].toString();

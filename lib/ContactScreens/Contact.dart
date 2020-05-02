@@ -8,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Contact extends StatelessWidget {
   PassToContact passToContact;
-  static const routeName='/Contact';
+  static const routeName='/contact';
   static const Color color = const Color(0xff303e84);
   Future<void> _launched;
   static const String assetName = 'assets/contactPerson.svg';
@@ -47,10 +47,10 @@ class Contact extends StatelessWidget {
           backgroundColor: color,
           elevation: 0,
           actions: [
-            IconButton(
+            /*IconButton(
               icon: svgIconAdd,
               onPressed: () {},
-            )
+            )*/
           ],
         ),
         body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [

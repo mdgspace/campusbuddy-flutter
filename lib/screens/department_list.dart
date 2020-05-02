@@ -24,7 +24,7 @@ class DepartmentListPage extends StatelessWidget {
       ),
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
       child: ListTile(
-        onTap: () => Navigator.of(context).pushNamed("/ContactList", arguments: {
+        onTap: () => Navigator.of(context).pushNamed("/contactList", arguments: {
           'dept_name': document['dept_name'],
           'dept_id': 'groups/$groupDocID/departments/${document.documentID}',
         }),

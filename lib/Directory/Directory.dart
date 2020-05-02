@@ -23,7 +23,7 @@ final _selectedBgColor = Colors.indigo[900];
 final _unselectedBgColor = Colors.indigo[700];
 final List<Widget> _children =[
  DirectoryList(),
-  PostList(),
+  Blank(),
   Blank()
 ];
 
