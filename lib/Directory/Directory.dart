@@ -1,4 +1,5 @@
 import 'package:campusbuddy/Directory/DirectoryListWidget.dart';
+import 'package:campusbuddy/Posts/PostList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
