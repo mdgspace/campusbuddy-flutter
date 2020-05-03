@@ -2,13 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:campusbuddy/directory/blank.dart';
+import 'package:campusbuddy/Blank.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:campusbuddy/directory/directory_list_widget.dart';
-import 'package:campusbuddy/post_screen/post.dart';
-class Directory extends StatefulWidget
-{
+import 'DirectoryListWidget.dart';
+import 'directory_list_widget.dart';
+
+class Directory extends StatefulWidget {
   Directory({Key key}) : super(key: key);
+
+  static const routeName = "/directory";
 
   @override
   _DirectoryState createState() => _DirectoryState();
@@ -20,7 +22,7 @@ final _selectedBgColor = Colors.indigo[900];
 final _unselectedBgColor = Colors.indigo[700];
 final List<Widget> _children =[
  DirectoryList(),
- Post(),
+  Post(),
   Blank()
 ];
 

@@ -2,18 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:campusbuddy/directory/blank.dart';
-
-class DirectoryList extends StatefulWidget
-{
-
-  @override
-  _DirectoryListState createState() => _DirectoryListState();
-}
-
-class _DirectoryListState extends State<DirectoryList> {
-
-
+class DirectoryList extends StatelessWidget {
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -21,14 +10,16 @@ class _DirectoryListState extends State<DirectoryList> {
 
       child: InkWell(
         child: ListTile(
-          onTap: (){
-            Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) => Blank()),
-            );
-          },
+          onTap: () => Navigator.of(context).pushNamed(
+            DepartmentListPage.routeName,
+            arguments: {
+              'group_id': document.documentID,
+              'group_name': document['group_name']
+            },
+          ),
           contentPadding: EdgeInsets.all(10),
           leading: SvgPicture.asset(
-            'assets/images/icon.svg',
+            'assets/icon.svg',
             color: Colors.indigo[800],
           ),
           trailing: Icon(
@@ -47,7 +38,7 @@ class _DirectoryListState extends State<DirectoryList> {
   Widget _buildList(context, snapshot) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (context, index) {
+        (context, index) {
           return _buildListItem(context, snapshot.data.documents[index]);
         },
         childCount: snapshot.data.documents.length,
@@ -86,18 +77,18 @@ class _DirectoryListState extends State<DirectoryList> {
               case ConnectionState.waiting:
                 return SliverToBoxAdapter(
                   child: Center(
+                    heightFactor: 20,
+                    widthFactor: 10,
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
                     ),
                   ),
                 );
               default:
-                return
-                  _buildList(context, snapshot);
+                return _buildList(context, snapshot);
             }
           },
         ),
-
       ],
     );
   }

@@ -1,155 +1,204 @@
 import 'package:campusbuddy/ContactScreens/Contact.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:loading_animations/loading_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:campusbuddy/ContactScreens/ContactListElement.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-class ContactList extends StatefulWidget {
-  static Color color = const Color(0xff303e84);
-  static String assetName = 'assets/contactPerson.svg';
-  static String assetNameAcad = 'assets/acad.svg';
-  static String assetNameArrow = 'assets/arrow.svg';
-  @override
-  _ContactListState createState() => _ContactListState();
-}
-class _ContactListState extends State<ContactList> {
-  final databaseReference = FirebaseDatabase.instance.reference();
-  static String title="BioTechnology";
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class ContactList extends StatelessWidget {
+  static const routeName = '/contactList';
+  static const Color color = const Color(0xff303e84);
+  static const String assetName = 'assets/contactPerson.svg';
+  static const String assetNameAcad = 'assets/acad.svg';
+  static const String assetNameArrow = 'assets/arrow.svg';
+  static String title='Department';
+  static String pathId2;
+  final  title2;
+  final pathId;
   static Widget svgIcon = SvgPicture.asset(
-      ContactList.assetName,
-      color: ContactList.color,
-      width: 42.w,
-      height: 42.h,
+    assetName,
+    color: color,
+    width: 42.w,
+    height: 42.h,
   );
   static Widget svgArrowIcon = SvgPicture.asset(
-    ContactList.assetNameArrow,
+    assetNameArrow,
     color: Color(0xff3B3B3B),
     width: 5.5.w,
     height: 11.3.h,
   );
+
   static Widget svgIconAcad = Padding(
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child:SvgPicture.asset(
-      ContactList.assetNameAcad,
-      color: Colors.white,
-      width: 42.w,
-      height: 42.h,
-  ));
-  static final dbRef =  FirebaseDatabase.instance.reference();
-  static final makecall= new MakeCall();
-  static var futureBuilder=new FutureBuilder(
-      future:  makecall.firebaseCalls(dbRef), // async work
-      // ignore: top_level_function_literal_block
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none: return Text("INTERNET Not There");
-          case ConnectionState.waiting: return Center(
-            child: new LoadingBouncingGrid.square(
-              borderColor: Colors.indigo[900],
-              backgroundColor: ContactList.color,
-              duration: Duration(milliseconds: 400),
-            ),
-          );
-          default:
-            if (snapshot.hasError)
-              return new Text('Error: ${snapshot.error}');
-            else
-              return CustomScrollView(
-                slivers: <Widget>[SliverAppBar(
-                  floating: true,
-                  pinned: true,
-                  snap: true,
-                  expandedHeight: 215.3.h,
-                  backgroundColor: ContactList.color,
-                  flexibleSpace:FlexibleSpaceBar(
-                    centerTitle: true,
-                    title: Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: ScreenUtil().setSp(20),
-                        fontWeight: FontWeight.w500,
+      child: SvgPicture.asset(
+        assetNameAcad,
+        color: Colors.white,
+        width: 42.w,
+        height: 42.h,
+      ));
+  ContactList({Key key,@required this.title2,@required this.pathId})
+      :super(key:key);
+ static void _fillDetail(context, DocumentSnapshot documents) {
+    String office = "", email = "", residence = "", contactName = "";
+    if (documents['office'].length!=0) {
+      office = documents['office'][0].toString();
+    }
+    if (documents['email'].length!=0) {
+      email = documents['email'][0].toString();
+    }
+    if (documents['residence'].length!=0) {
+      residence = documents['residence'][0].toString();
+    }
+    contactName = documents['contact_name'].toString();
+    PassToContact pass = new PassToContact(office, email, residence,
+        contactName, documents['designation'].toString(), ContactList.title);
+    Navigator.of(context).pushNamed(Contact.routeName, arguments: pass);
+  }
+
+  Widget futureBuilder() {
+    return StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance
+            .collection(
+            '${ContactList.pathId2}/contacts')
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Center(
+                heightFactor: 10,
+                widthFactor: 10,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.blue),
+                ),
+              );
+
+            case ConnectionState.waiting:
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.blue),
+                ),
+              );
+
+            default:
+              if (snapshot.hasError)
+                return new Text('Error: ${snapshot.error}');
+              else
+                return CustomScrollView(
+                  slivers: <Widget>[
+                    SliverAppBar(
+                      floating: true,
+                      pinned: true,
+                      snap: true,
+                      expandedHeight: 215.3.h,
+                      backgroundColor: ContactList.color,
+                      flexibleSpace: FlexibleSpaceBar(
+                        centerTitle: true,
+                        title: Text(
+                          '${ContactList.title}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: ScreenUtil().setSp(17),
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+
+                        background: ContactList.svgIconAcad,
                       ),
                     ),
-                    background:svgIconAcad,
-                  ),
-                ),
-                  SliverList(
-                    // Use a delegate to build items as they're scrolled on screen.
-                    delegate: SliverChildBuilderDelegate(
-                      // The builder function returns a ListTile with a title that
-                      // displays the index of the current item.
-                          (context, index)  {return Padding(
-                          padding: EdgeInsets.fromLTRB(13.5, 8, 13.5, 0),
-                          child: GestureDetector(
-                            onTap: (){
-                              PassToContact pass=new PassToContact(snapshot.data[index].office.toString(),snapshot.data[index].email.toString(),snapshot.data[index].residence.toString(),snapshot.data[index].name.toString(),snapshot.data[index].sub.toString(),title);
-                              Navigator.pushNamed(context, '/Contact',arguments: pass);
-                            },
-                            child: Card(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start
-                                    ,
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        // The builder function returns a ListTile with a title that
+                        // displays the index of the current item.
+                            (context, index) {
+                          DocumentSnapshot documents =
+                          snapshot.data.documents[index];
+                          return Padding(
+                              padding: EdgeInsets.fromLTRB(13.5, 8, 13.5, 0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  _fillDetail(context, documents);
+                                },
+                                child: Card(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Padding(
-                                          padding:EdgeInsets.fromLTRB(12, 17, 12, 17),
-                                          child: svgIcon),
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text('${snapshot.data[index].name}',
-                                            style: TextStyle(
-                                              fontSize: ScreenUtil().setSp(17),
-
-                                              fontWeight: FontWeight.normal,
-                                            ),),
-                                          Text('${snapshot.data[index].sub}',
-                                            style: TextStyle(
-                                              fontSize: ScreenUtil().setSp(17),
-                                              color: Colors.black38,
-                                            ),)
-                                        ],
+                                      Flexible(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    12, 17, 12, 17),
+                                                child: ContactList.svgIcon),
+                                            Flexible(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    '${documents['contact_name']}',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                      ScreenUtil().setSp(17),
+                                                      fontWeight:
+                                                      FontWeight.normal,
+                                                    ),
+                                                    overflow: TextOverflow.clip,
+                                                  ),
+                                                  Text(
+                                                    '${documents['designation']}',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                      ScreenUtil().setSp(17),
+                                                      color: Colors.black38,
+                                                    ),
+                                                    overflow: TextOverflow.clip,
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: ContactList.svgArrowIcon,
+                                        onPressed: () {
+                                          _fillDetail(context, documents);
+                                        },
                                       )
                                     ],
                                   ),
-                                  IconButton(
-                                    icon: svgArrowIcon,
-                                    onPressed: () {
-                                      print(snapshot.data[index].name);
-                                      print("hello");
-                                      PassToContact pass=new PassToContact(snapshot.data[index].office.toString(),snapshot.data[index].email.toString(),snapshot.data[index].residence.toString(),snapshot.data[index].name.toString(),snapshot.data[index].sub.toString(),title);
-                                  Navigator.pushNamed(context, '/Contact',arguments: pass);
-                                    },
-                                  )
-                                ],
-                              ),
-                            ),
-                          )
-                      );},
-                      // Builds 1000 ListTiles
-                      childCount:snapshot.data.length,
+                                ),
+                              ));
+                        },
+                        childCount: snapshot.data.documents.length,
+                      ),
                     ),
-                  ),
-                  SliverFillRemaining(
-                    child: Text(""),
-                  )
-                ],
-              );
-        }
-      });
+                    SliverFillRemaining(
+                      child: Text(""),
+                    )
+                  ],
+                );
+          }
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context,allowFontScaling: true, width: 410, height: 703);
+    ContactList.title=title2;
+    ContactList.pathId2=pathId;
+    ScreenUtil.init(context, allowFontScaling: true, width: 410, height: 703);
     return Scaffold(
-      body:futureBuilder,
+      body: futureBuilder(),
     );
   }
 }
-class PassToContact{
-  String office,email,residence,name,sub,department;
-  PassToContact(this.office,this.email,this.residence,this.name,this.sub,this.department);
+
+class PassToContact {
+  String office, email, residence, name, sub, department;
+  PassToContact(this.office, this.email, this.residence, this.name, this.sub,
+      this.department);
 }
