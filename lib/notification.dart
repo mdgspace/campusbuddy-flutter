@@ -1,24 +1,23 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
+import 'post_screen/post.dart';
 
-
-void main() {
-  runApp(
-    new MaterialApp(home: ScheduleNotification()),
-  );
-}
 
 class ScheduleNotification extends StatefulWidget {
+  final PostDeets notifs;
+  ScheduleNotification(this.notifs);
+
   @override
-  _ScheduleNotificationState createState() => new _ScheduleNotificationState();
+  _ScheduleNotificationState createState() => new _ScheduleNotificationState(notifs);
 }
 
-class _ScheduleNotificationState extends State<ScheduleNotification>
-{
+class _ScheduleNotificationState extends State<ScheduleNotification> {
+
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  final PostDeets notifs;
+  _ScheduleNotificationState(this.notifs);
 
   //code to initialize plugin
   @override
@@ -32,34 +31,32 @@ class _ScheduleNotificationState extends State<ScheduleNotification>
     flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings,);
 
-
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body:Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          FlatButton(
-            onPressed: ()
-            {
-              _scheduleNotification();
-            },
-            child: Text(
-                'Schedule Notification'
-            ),
-          ),
-
-        ],
-      )
-    );
+    return
+            Center(
+              child: RaisedButton(
+                color: Colors.indigo[700],
+                elevation: 3,
+                highlightElevation: 6,
+                onPressed: ()
+                {
+                  _scheduleNotification();
+                },
+                child: Text(
+                    'Schedule Notification?',style: TextStyle(
+                    color: Colors.white,fontStyle: FontStyle.italic,fontWeight: FontWeight.w600),
+                ),
+                ),
+            );
   }
 
 
 //method to schedule notifications, give it date and time arguments retrieved from db
   Future<void> _scheduleNotification() async {
-    var scheduledNotificationDateTime = DateTime.now().add(Duration(seconds: 5));
+    var scheduledNotificationDateTime = notifs.time.add(Duration(seconds: 5));
     var androidPlatformChannelSpecifics =
     AndroidNotificationDetails('campusbuddy',
         'campusbuddy', 'campusbuddy');
@@ -68,8 +65,8 @@ class _ScheduleNotificationState extends State<ScheduleNotification>
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
         0,
-        'show title here',
-        'show body here',
+        "Event: ${notifs.title}",
+        'Venue: ${notifs.venue}, Conducted by: ${notifs.group}',
         scheduledNotificationDateTime,
         platformChannelSpecifics);
   }

@@ -8,6 +8,7 @@ class DirectoryList extends StatelessWidget {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       elevation: 1,
+
       child: InkWell(
         child: ListTile(
           onTap: () => Navigator.of(context).pushNamed(
@@ -28,9 +29,7 @@ class DirectoryList extends StatelessWidget {
           ),
           title: Text(
             document['group_name'],
-            style: TextStyle(
-              fontFamily: 'Roboto',
-            ),
+            style: TextStyle( fontFamily:'Roboto',),
           ),
         ),
       ),
@@ -48,6 +47,7 @@ class DirectoryList extends StatelessWidget {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -60,12 +60,16 @@ class DirectoryList extends StatelessWidget {
                 tooltip: 'Search',
                 icon: const Icon(Icons.search),
                 onPressed: () async {
-                  //  final int selected = awai showSearch<int>();
-                }),
+                  //  final int selected = await showSearch<int>();
+                }
+            ),
           ],
         ),
+
         StreamBuilder<QuerySnapshot>(
-          stream: Firestore.instance.collection('groups').snapshots(),
+          stream: Firestore.instance
+              .collection('groups')
+              .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             // TODO: Better way to represent errors

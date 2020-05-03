@@ -1,10 +1,13 @@
-import 'package:campusbuddy/Blank.dart';
+import 'package:campusbuddy/directory/blank.dart';
 import 'package:campusbuddy/ContactScreens/Contact.dart';
 import 'package:campusbuddy/ContactScreens/ContactList.dart';
-import 'package:campusbuddy/Directory/Directory.dart';
+import 'package:campusbuddy/directory/directory.dart';
 import 'package:campusbuddy/auth/auth.dart';
 import 'package:campusbuddy/auth/root_page.dart';
+import 'package:campusbuddy/post_screen/post.dart';
+import 'package:campusbuddy/post_screen/post2.dart';
 import 'package:campusbuddy/screens/department_list.dart';
+import 'post_screen/post.dart';
 import 'package:flutter/material.dart';
 
 class RouteGenerator {
@@ -34,9 +37,20 @@ class RouteGenerator {
           ),
         );
       case Directory.routeName:
-        return MaterialPageRoute(builder: (_) => Directory());
+        return MaterialPageRoute(
+            builder: (_) => Directory());
+      case Post.routeName:
+        final PostDeets postDeets = settings.arguments;
+        return MaterialPageRoute(
+            builder: (_) => Post(postDeets));
+      case Post2.routeName:
+        final PostDeets postDeets2 = settings.arguments;
+        return MaterialPageRoute(
+            builder: (_) => Post2(postDeets2));
       default:
         return MaterialPageRoute(builder: (_) => Blank());
+
+
     }
   }
 }

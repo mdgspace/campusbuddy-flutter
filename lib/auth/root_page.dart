@@ -1,5 +1,5 @@
-import 'package:campusbuddy/Directory/Directory.dart';
-import 'package:campusbuddy/Directory/DirectoryListWidget.dart';
+import 'package:campusbuddy/directory/directory.dart';
+import 'package:campusbuddy/directory/directory_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'auth.dart';
@@ -80,15 +80,18 @@ class _RootPageState extends State<RootPage>
           loginCallback: loginCallback,
         );
         break;
+
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
-          return new Directory(
+          return Directory(
           );
         } else
           return buildWaitingScreen();
+
         break;
       default:
         return buildWaitingScreen();
+
     }
   }
 }
