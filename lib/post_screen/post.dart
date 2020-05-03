@@ -5,41 +5,43 @@ import 'package:campusbuddy/notification.dart';
 import 'package:campusbuddy/calendar.dart';
 
 class Post extends StatefulWidget {
+  final PostDeets postDeets;
+  Post(this.postDeets, {Key key}) : super(key: key);
+  static const routeName = "/post";
   @override
-  _PostState createState() => _PostState();
+  _PostState createState() => _PostState(postDeets);
 }
 
 class _PostState extends State<Post> {
-PostDeets deets;
 
-Widget _buildPost( BuildContext context, DocumentSnapshot documents) {
+  PostDeets deets;
+  _PostState(this.deets);
 
-     deets = new PostDeets( documents['title'].toString(), documents['scheduled_at'].toDate(), documents['venue'].toString(),
-             documents['description'].toString(), documents['image'].toString(), documents['created_by'].toString() );
-
-     return Scaffold(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 10.0),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Container(
-                            height:40,child: Center(child: Text(deets.group ,style: TextStyle(color: Colors.indigo[900],fontSize: 30,fontWeight: FontWeight.w400,
-                            fontFamily: 'Roboto')))),),
+                  padding: const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 10.0),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Container(
+                              height:40,child: Center(child: Text(deets.group ,style: TextStyle(color: Colors.indigo[900],fontSize: 30,fontWeight: FontWeight.w400,
+                              fontFamily: 'Roboto')))),),
 
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Container( height: 30,child: Align( alignment: Alignment.center,
-                          child: Text("Brings to You",style: TextStyle(color: Colors.black,fontSize: 20,fontStyle: FontStyle.italic,fontWeight: FontWeight.w700,
-                              fontFamily: 'Roboto')),)),),
-                    ])),
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Container( height: 30,child: Align( alignment: Alignment.center,
+                            child: Text("Brings to You",style: TextStyle(color: Colors.black,fontSize: 20,fontStyle: FontStyle.italic,fontWeight: FontWeight.w700,
+                                fontFamily: 'Roboto')),)),),
+                      ])),
               Container(
                 width: double.infinity,
                 child: Card(
@@ -60,10 +62,10 @@ Widget _buildPost( BuildContext context, DocumentSnapshot documents) {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Center(child: Text('DATE:' ,
-                                          style: TextStyle(color: Colors.white,
+                                      style: TextStyle(color: Colors.white,
                                           fontSize: 14,
                                           fontFamily: 'Roboto'
-                                  ))),
+                                      ))),
                                   SizedBox(height: 3,),
                                   Center(child: Text('${DateFormat("dd-MM-yyyy").format(deets.time)}' ,
                                       style: TextStyle(color: Colors.white,
@@ -100,30 +102,37 @@ Widget _buildPost( BuildContext context, DocumentSnapshot documents) {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                          Center(child: Text("VENUE: " ,
-                              style: TextStyle(color: Colors.white,
-                                  fontSize: 13,
-                                  fontFamily: 'Roboto'))),
-                          SizedBox(height: 3,),
-                          Center(child: Text( deets.venue ,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: Colors.white,
-                                  fontSize: 14,
-                                  fontStyle: FontStyle.italic,
-                                  fontFamily: 'Roboto'))),
-                        ],)
+                            Center(child: Text("VENUE: " ,
+                                style: TextStyle(color: Colors.white,
+                                    fontSize: 13,
+                                    fontFamily: 'Roboto'))),
+                            SizedBox(height: 3,),
+                            Center(child: Text( deets.venue ,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(color: Colors.white,
+                                    fontSize: 14,
+                                    fontStyle: FontStyle.italic,
+                                    fontFamily: 'Roboto'))),
+                          ],)
                     ),flex: 1,),
                   ]),
               SizedBox(height: 20),
 
-              Image.network('${deets.imgURL}'),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.indigo[900]),
+                  borderRadius: BorderRadius.circular(5.0),
+                  image: DecorationImage(
+                      image: NetworkImage('${deets.imgURL}'),
+                      fit: BoxFit.fill
+                  ),),),
 
               ButtonBar(
                 alignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ScheduleNotification(deets),
                   Calendar(deets),
-                  ],),
+                ],),
               Card(
                 elevation: 2,
                 child: Padding(
@@ -133,49 +142,11 @@ Widget _buildPost( BuildContext context, DocumentSnapshot documents) {
                   ),
                 ),
               ),
-              ]),
+            ]),
       ),
     );
   }
-
-  Widget futureBuilder() {
-    return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('Events').snapshots(),
-
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return Center(
-                heightFactor: 10,
-                widthFactor: 10,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.indigo[700]),
-                ),
-              );
-
-            case ConnectionState.waiting:
-              return Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.indigo[700]),
-                ),
-              );
-
-            default:
-              if (snapshot.hasError)
-                return new Text('Error: ${snapshot.error}');
-              else
-                print(snapshot.data.documents);
-               return _buildPost(context, snapshot.data.documents[2]);
-          }
-        });
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    return futureBuilder();
-  }
 }
-
 
 class PostDeets{
   String title, venue, desc, imgURL, group; DateTime time;

@@ -11,7 +11,6 @@ class Calendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(calendar.title);
     //event object is created, pass it title and description
     Event event = Event(
       title: calendar.title,

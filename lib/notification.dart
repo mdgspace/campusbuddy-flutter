@@ -17,7 +17,7 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final PostDeets notifs;
-  _ScheduleNotificationState(PostDeets deets,{@required this.notifs});
+  _ScheduleNotificationState(this.notifs);
 
   //code to initialize plugin
   @override
