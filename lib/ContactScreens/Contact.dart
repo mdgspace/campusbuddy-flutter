@@ -81,7 +81,7 @@ class Contact extends StatelessWidget {
                       fontSize: ScreenUtil().setSp(20),
                       fontWeight: FontWeight.bold,
                     ),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                   ),
                   SizedBox(
                     height: 20.h,
