@@ -49,8 +49,6 @@ class RouteGenerator {
             builder: (_) => Post2(postDeets2));
       default:
         return MaterialPageRoute(builder: (_) => Blank());
-
-
     }
   }
 }

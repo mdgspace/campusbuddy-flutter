@@ -2,7 +2,7 @@ import 'package:campusbuddy/Posts/PostList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:campusbuddy/Blank.dart';
+import 'package:campusbuddy/directory/blank.dart';
 import 'directory_list_widget.dart';
 
 class Directory extends StatefulWidget {
