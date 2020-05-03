@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:campusbuddy/notification.dart';
+import 'package:campusbuddy/calendar.dart';
 
 class Post extends StatefulWidget {
   @override
@@ -9,38 +11,39 @@ class Post extends StatefulWidget {
 
 class _PostState extends State<Post> {
 PostDeets deets;
-  Widget _buildPost( BuildContext context, DocumentSnapshot documents) {
-     deets = new PostDeets(documents['title'].toString(), documents['scheduled_at'].toDate(), documents['venue'].toString(),
-        documents['description'].toString(), documents['image'].toString(), documents['created_by'].toString());
-    return Scaffold(
+
+Widget _buildPost( BuildContext context, DocumentSnapshot documents) {
+
+     deets = new PostDeets( documents['title'].toString(), documents['scheduled_at'].toDate(), documents['venue'].toString(),
+             documents['description'].toString(), documents['image'].toString(), documents['created_by'].toString() );
+
+     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 10.0),
-                child: Row(
+                child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Container(
                             height:40,child: Center(child: Text(deets.group ,style: TextStyle(color: Colors.indigo[900],fontSize: 30,fontWeight: FontWeight.w400,
-                            fontFamily: 'Roboto')))),
-                      ),
+                            fontFamily: 'Roboto')))),),
 
                       Padding(
                         padding: const EdgeInsets.all(5.0),
-                        child: Container( height: 40,child: Align( alignment: Alignment.center,
-                          child: Text("Brings to You",style: TextStyle(color: Colors.indigo[900],fontSize: 20,
-                              fontFamily: 'Roboto')),
-                        )),
-                      ),
-                    ]),
-              ),
+                        child: Container( height: 30,child: Align( alignment: Alignment.center,
+                          child: Text("Brings to You",style: TextStyle(color: Colors.black,fontSize: 20,fontStyle: FontStyle.italic,fontWeight: FontWeight.w700,
+                              fontFamily: 'Roboto')),)),),
+                    ])),
               Container(
                 width: double.infinity,
                 child: Card(
+                  elevation: 2,
                   child: Center(
                     child: Text(deets.title,style: TextStyle(color: Colors.indigo[800],fontSize: 30,
                         fontFamily: 'Roboto')),
@@ -50,33 +53,87 @@ PostDeets deets;
               SizedBox(height: 20),
               Row(
                   children: <Widget>[
-
                     Expanded(
-                        child: Container(color: Colors.indigo[800],
-                            height: 40,
-                            child: Center(child: Text('DATE: ${DateFormat("dd-MM-yyyy").format(deets.time)}' ,style: TextStyle(color: Colors.white,
-                                fontFamily: 'Roboto')))
+                        child: Container(color: Colors.indigo[700],
+                            height: 50,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Center(child: Text('DATE:' ,
+                                          style: TextStyle(color: Colors.white,
+                                          fontSize: 14,
+                                          fontFamily: 'Roboto'
+                                  ))),
+                                  SizedBox(height: 3,),
+                                  Center(child: Text('${DateFormat("dd-MM-yyyy").format(deets.time)}' ,
+                                      style: TextStyle(color: Colors.white,
+                                          fontSize: 15,
+                                          fontStyle: FontStyle.italic,
+                                          fontFamily: 'Roboto' ))),
+                                ])
                         ), flex:1
                     ),
 
-                    Expanded(child: Container(color: Colors.indigo[800],
-                        height: 40,
-                        child: Center(child: Text("VENUE: "+ deets.venue ,style: TextStyle(color: Colors.white,
-                            fontFamily: 'Roboto')))
+                    Expanded(
+                        child: Container(color: Colors.indigo[700],
+                            height: 50,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Center(child: Text('TIME:' ,style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontFamily: 'Roboto'))),
+                                SizedBox(height: 3,),
+                                Center(child: Text('${DateFormat.jm().format(deets.time)}' ,style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontStyle: FontStyle.italic,
+                                    fontFamily: 'Roboto'))),
+                              ],
+                            )
+                        ), flex:1
+                    ),
+
+                    Expanded(child: Container(color: Colors.indigo[700],
+                        height: 50,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                          Center(child: Text("VENUE: " ,
+                              style: TextStyle(color: Colors.white,
+                                  fontSize: 13,
+                                  fontFamily: 'Roboto'))),
+                          SizedBox(height: 3,),
+                          Center(child: Text( deets.venue ,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: Colors.white,
+                                  fontSize: 14,
+                                  fontStyle: FontStyle.italic,
+                                  fontFamily: 'Roboto'))),
+                        ],)
                     ),flex: 1,),
                   ]),
+              SizedBox(height: 20),
 
+              Image.network('${deets.imgURL}'),
+
+              ButtonBar(
+                alignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ScheduleNotification(deets),
+                  Calendar(deets),
+                  ],),
               Card(
+                elevation: 2,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(deets.desc, style: TextStyle(color: Colors.indigo[800],fontSize: 15,
+                  child: Text(deets.desc, style: TextStyle(color: Colors.black,fontSize: 15,
                       fontFamily: 'Roboto')
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-              Image.network('${deets.imgURL}'),
-            ]),
+              ]),
       ),
     );
   }
@@ -108,7 +165,7 @@ PostDeets deets;
                 return new Text('Error: ${snapshot.error}');
               else
                 print(snapshot.data.documents);
-               return _buildPost(context, snapshot.data.documents[0]);
+               return _buildPost(context, snapshot.data.documents[2]);
           }
         });
   }
