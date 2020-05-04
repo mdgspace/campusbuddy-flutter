@@ -125,7 +125,10 @@ class _PostState extends State<Post> {
                   image: DecorationImage(
                       image: NetworkImage('${deets.imgURL}'),
                       fit: BoxFit.fill
-                  ),),),
+                  ),
+                ),
+                child: Image.network('${deets.imgURL}'),
+              ),
 
               ButtonBar(
                 alignment: MainAxisAlignment.center,
