@@ -2,8 +2,8 @@ import 'package:campusbuddy/post_screen/post.dart';
 import 'package:campusbuddy/post_screen/post2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 class PostList extends StatefulWidget {
   static const Color color = const Color(0xff303e84);
 
@@ -71,7 +71,7 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (BuildContext context,int index){
-                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], null, null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
+                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], null,null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
                   return getCard(postDeets);
             });
         },
@@ -111,7 +111,12 @@ Widget events(){
     );
 }
 Widget getCard(PostDeets postDeets){
-  String createdBy=postDeets.group,title=postDeets.title, scheduleAt=postDeets.venue, src=postDeets.imgURL;
+  String createdBy="",title="", scheduleAt="", src="";
+
+  createdBy=postDeets.group;title=postDeets.title;
+  if(postDeets.venue!=null){
+  scheduleAt=postDeets.venue;}
+  src=postDeets.imgURL;
     if(src==null || src=="") src="https://lh3.googleusercontent.com/ZDoNo4_cS_KW0B0fKdM3LIkEwfh8LSa6pAnsYKfehdsYlX64DmueZGOTNdXRlo7ccNE";
     return GestureDetector(
       onTap: (){
@@ -131,7 +136,9 @@ Widget getCard(PostDeets postDeets){
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Expanded(
+                    Container(
+                        height: 65.h,
+                        width: 65.w,
                         child: AspectRatio(
                           aspectRatio: 1/1,
                           child: Padding(
@@ -144,42 +151,47 @@ Widget getCard(PostDeets postDeets){
                         )
                     ),
                     SizedBox(
-                      width: 5.0,
+                      width: 5.0.w,
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Container(
-                          child: Text(
-                            '$createdBy',
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              '$createdBy',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: ScreenUtil().setSp(20),
+                                color: Colors.black87
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                          ),
+                          SizedBox(
+                            height: 5.25.h,
+                          ),
+                          Text(
+                              'Title : $title',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: ScreenUtil().setSp(20),
+                                fontSize: ScreenUtil().setSp(17.52),
+                              fontWeight: FontWeight.w500,
                               color: Colors.black87
-                              )
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
                           ),
-
-                        ),
-                        SizedBox(
-                          height: 5.25.h,
-                        ),
-                        Text(
-                            'Title : $title',
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(17.52),
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87
+                          SizedBox(
+                            height: 5.25.h,
                           ),
-                        ),
-                        SizedBox(
-                          height: 5.25.h,
-                        ),
-                        Text(
-                            '$scheduleAt',
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                          Text(
+                              '$scheduleAt',
+                            overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.left,
+                          ),
+                        ],
 
+                      ),
                     ),
                   ],
                 ),
