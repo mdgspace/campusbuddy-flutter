@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'post_screen/post.dart';
 
 
@@ -14,7 +15,7 @@ class ScheduleNotification extends StatefulWidget {
 }
 
 class _ScheduleNotificationState extends State<ScheduleNotification> {
-
+  final GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final PostDeets notifs;
   _ScheduleNotificationState(this.notifs);
@@ -44,7 +45,14 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
                 onPressed: ()
                 {
                   _scheduleNotification();
-                },
+                  Fluttertoast.showToast(
+                      msg: "SUCCESSFUL",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.indigo[700],
+                    textColor: Colors.white
+                  );
+                  },
                 child: Text(
                     'Schedule Notification?',style: TextStyle(
                     color: Colors.white,fontStyle: FontStyle.italic,fontWeight: FontWeight.w600),
