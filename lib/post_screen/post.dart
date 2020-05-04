@@ -122,12 +122,7 @@ class _PostState extends State<Post> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.indigo[900]),
                   borderRadius: BorderRadius.circular(5.0),
-                  image: DecorationImage(
-                      image: NetworkImage('${deets.imgURL}'),
-                      fit: BoxFit.fill
-                  ),
-                ),
-                child: Image.network('${deets.imgURL}'),
+                ),child: Image.network('${deets.imgURL}')
               ),
 
               ButtonBar(

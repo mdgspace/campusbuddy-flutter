@@ -69,12 +69,10 @@ class _Post2State extends State<Post2> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.indigo[900]),
                     borderRadius: BorderRadius.circular(5.0),
-                    image: DecorationImage(
-                        image: NetworkImage('${postDeets2.imgURL}'),
-                        fit: BoxFit.fill
-                    ),
+                  ),
+                  child: Image.network('${postDeets2.imgURL}')
 
-                  ),),
+              ),
 
               Card(
                 elevation: 2,
