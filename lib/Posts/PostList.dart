@@ -130,7 +130,7 @@ Widget getCard(PostDeets postDeets){
       },
       child: Container(
         child: Card(
-          elevation: 10,
+          elevation: 5,
           child:Container(
               child: Padding(
               padding: EdgeInsets.fromLTRB(12, 16, 0, 16),
@@ -163,9 +163,8 @@ Widget getCard(PostDeets postDeets){
                           Text(
                               '$createdBy',
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                  fontFamily:'Roboto',
                                   fontSize: ScreenUtil().setSp(20),
-                                color: Colors.black87
                               ),
                               overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.left,
@@ -176,8 +175,8 @@ Widget getCard(PostDeets postDeets){
                           Text(
                               'Title : $title',
                             style: TextStyle(
+                                fontFamily:'Roboto',
                                 fontSize: ScreenUtil().setSp(17.52),
-                              fontWeight: FontWeight.w500,
                               color: Colors.black87
                             ),
                             overflow: TextOverflow.ellipsis,
