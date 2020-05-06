@@ -1,33 +1,34 @@
+import 'post_screen/post.dart';
 import 'package:flutter/material.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 
-void main() => runApp(MyApp());
+//void main() => runApp(Calendar());
 
-class MyApp extends StatelessWidget {
+class Calendar extends StatelessWidget {
+  final PostDeets calendar;
+  Calendar(this.calendar);
   final GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     //event object is created, pass it title and description
     Event event = Event(
-      title: 'Test event',
-      description: 'example',
+      title: calendar.title,
+      description: calendar.desc,
       location: 'Flutter app',
-      startDate: DateTime.now(),
-      endDate: DateTime.now().add(Duration(minutes: 5)),
+      startDate:calendar.time,
+      endDate: calendar.time.add(Duration(minutes: 5)),
       allDay: false,
     );
 
-    return MaterialApp(
-      home: Scaffold(
-        key: scaffoldState,
-        appBar: AppBar(
-          title: const Text('Add event to calendar example'),
-        ),
-        body: Center(
+    return  Center(
           child: RaisedButton(
-            child: Text('Add test event to device calendar'),
-
+            elevation: 3,
+            highlightElevation: 6,
+            child: Text('Add Event to your calendar?',style: TextStyle(
+                color: Colors.white,fontStyle: FontStyle.italic,fontWeight: FontWeight.w600),),
             //this is the method we have to call when user clicks on fab
+            color: Colors.indigo[700],
             onPressed: () {
               Add2Calendar.addEvent2Cal(event).then((success) {
                 scaffoldState.currentState.showSnackBar(
@@ -35,8 +36,6 @@ class MyApp extends StatelessWidget {
               });
             },
           ),
-        ),
-      ),
-    );
+        );
   }
 }

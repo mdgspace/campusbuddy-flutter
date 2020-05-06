@@ -1,7 +1,9 @@
+import 'package:campusbuddy/post_screen/post.dart';
+import 'package:campusbuddy/post_screen/post2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 class PostList extends StatefulWidget {
   static const Color color = const Color(0xff303e84);
 
@@ -21,6 +23,7 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
         title:Text('Feed'),
       centerTitle: true,
       bottom: new TabBar(
+       indicatorColor: Colors.white,
           controller: _tabController,
           tabs: <Tab>[
         new Tab(icon: Text('Posts'),),
@@ -61,15 +64,16 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
             return Center(
                 heightFactor: 10,
                 widthFactor: 10,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.blue),
-                ),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
+              ),
               );
           else
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (BuildContext context,int index){
-              return getCard(snapshot.data.documents[index]['created_by'], snapshot.data.documents[index]['title'],'',snapshot.data.documents[index]['image']);
+                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], null,null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
+                  return getCard(postDeets);
             });
         },
       ),
@@ -92,87 +96,112 @@ Widget events(){
               heightFactor: 10,
               widthFactor: 10,
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.blue),
+                valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
               ),
             );
           else
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (BuildContext context,int index){
-              return getCard(snapshot.data.documents[index]['created_by'], snapshot.data.documents[index]['title'],'Venue : ${snapshot.data.documents[index]['venue']}',snapshot.data.documents[index]['image']);
+                  DateTime timestamp=(snapshot.data.documents[index]['scheduled_at']).toDate();
+                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], timestamp, snapshot.data.documents[index]['venue'], snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
+              return getCard(postDeets);
             });
         },
       ),
     );
 }
-Widget getCard(String createdBy,String title,String scheduleAt,String src){
-    if(src=="") src="https://lh3.googleusercontent.com/ZDoNo4_cS_KW0B0fKdM3LIkEwfh8LSa6pAnsYKfehdsYlX64DmueZGOTNdXRlo7ccNE";
-    return Container(
-      child: Card(
-        elevation: 10,
-        child:Container(
-            child: Padding(
-            padding: EdgeInsets.fromLTRB(12, 16, 0, 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Expanded(
-                      child: AspectRatio(
-                        aspectRatio: 1/1,
-                        child: Padding(
-                          padding: EdgeInsets.all(4),
-                          child: Image(
-                            image: NetworkImage(src,),
-                            fit: BoxFit.fill,
+Widget getCard(PostDeets postDeets){
+  String createdBy="",title="", scheduleAt="", src="";
+
+  createdBy=postDeets.group;title=postDeets.title;
+  if(postDeets.venue!=null){
+  scheduleAt=postDeets.venue;}
+  src=postDeets.imgURL;
+    if(src==null || src=="") src="https://lh3.googleusercontent.com/ZDoNo4_cS_KW0B0fKdM3LIkEwfh8LSa6pAnsYKfehdsYlX64DmueZGOTNdXRlo7ccNE";
+    return GestureDetector(
+      onTap: (){
+      if(postDeets.venue==null){
+        Navigator.of(context).pushNamed(Post2.routeName,arguments: postDeets);
+      }
+      else{
+        Navigator.of(context).pushNamed(Post.routeName,arguments: postDeets);
+      }
+      },
+      child: Container(
+        child: Card(
+          elevation: 5,
+          child:Container(
+              child: Padding(
+              padding: EdgeInsets.fromLTRB(12, 16, 0, 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Container(
+                        height: 65.h,
+                        width: 65.w,
+                        child: AspectRatio(
+                          aspectRatio: 1/1,
+                          child: Padding(
+                            padding: EdgeInsets.all(4),
+                            child: Image(
+                              image: NetworkImage(src,),
+                              fit: BoxFit.fill,
+                            ),
                           ),
-                        ),
-                      )
-                  ),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Container(
-                        child: Text(
-                          '$createdBy',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: ScreenUtil().setSp(20),
-                            color: Colors.black87
-                            )
-                        ),
+                        )
+                    ),
+                    SizedBox(
+                      width: 5.0.w,
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              '$createdBy',
+                              style: TextStyle(
+                                  fontFamily:'Roboto',
+                                  fontSize: ScreenUtil().setSp(20),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                          ),
+                          SizedBox(
+                            height: 5.25.h,
+                          ),
+                          Text(
+                              'Title : $title',
+                            style: TextStyle(
+                                fontFamily:'Roboto',
+                                fontSize: ScreenUtil().setSp(17.52),
+                              color: Colors.black87
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                          ),
+                          SizedBox(
+                            height: 5.25.h,
+                          ),
+                          Text(
+                              '$scheduleAt',
+                            overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.left,
+                          ),
+                        ],
 
                       ),
-                      SizedBox(
-                        height: 5.25.h,
-                      ),
-                      Text(
-                          'Title : $title',
-                        style: TextStyle(
-                            fontSize: ScreenUtil().setSp(17.52),
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5.25.h,
-                      ),
-                      Text(
-                          '$scheduleAt',
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
 
+        ),
+        padding: EdgeInsets.fromLTRB(8, 10, 8, 0),
       ),
-      padding: EdgeInsets.fromLTRB(8, 10, 8, 0),
     );
 }
 }

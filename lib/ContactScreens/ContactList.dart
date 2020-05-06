@@ -75,7 +75,7 @@ class ContactList extends StatelessWidget {
             case ConnectionState.waiting:
               return Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.blue),
+                  valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
                 ),
               );
 
@@ -97,8 +97,8 @@ class ContactList extends StatelessWidget {
                           '${ContactList.title}',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: ScreenUtil().setSp(17),
-                            fontWeight: FontWeight.w500,
+                            fontSize: ScreenUtil().setSp(17,allowFontScalingSelf: true),
+
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -136,7 +136,8 @@ class ContactList extends StatelessWidget {
                                             Flexible(
                                               child: Column(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     '${documents['contact_name']}',

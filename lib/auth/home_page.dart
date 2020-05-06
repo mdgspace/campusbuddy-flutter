@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomePage extends StatelessWidget {
 
-  Auth auth= new Auth();
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +25,7 @@ class HomePage extends StatelessWidget {
        color: Colors.white,
      ),
      onPressed: () {
-       auth.signOut();
-       Navigator.pushAndRemoveUntil(context,
-           MaterialPageRoute(builder: (BuildContext context) => RootPage(auth:new Auth())),
-           ModalRoute.withName('/'));
+
      },
    )
  ],
