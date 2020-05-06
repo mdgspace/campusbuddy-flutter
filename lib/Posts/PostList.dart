@@ -23,6 +23,7 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
         title:Text('Feed'),
       centerTitle: true,
       bottom: new TabBar(
+       indicatorColor: Colors.white,
           controller: _tabController,
           tabs: <Tab>[
         new Tab(icon: Text('Posts'),),
@@ -63,9 +64,9 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
             return Center(
                 heightFactor: 10,
                 widthFactor: 10,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.blue),
-                ),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
+              ),
               );
           else
             return ListView.builder(
@@ -95,7 +96,7 @@ Widget events(){
               heightFactor: 10,
               widthFactor: 10,
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.blue),
+                valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
               ),
             );
           else
@@ -134,6 +135,7 @@ Widget getCard(PostDeets postDeets){
               child: Padding(
               padding: EdgeInsets.fromLTRB(12, 16, 0, 16),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Container(
