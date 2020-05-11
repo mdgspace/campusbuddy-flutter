@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'post_screen/post.dart';
 
@@ -9,16 +10,17 @@ import 'post_screen/post.dart';
 class ScheduleNotification extends StatefulWidget {
   final PostDeets notifs;
   ScheduleNotification(this.notifs);
-
   @override
   _ScheduleNotificationState createState() => new _ScheduleNotificationState(notifs);
 }
 
 class _ScheduleNotificationState extends State<ScheduleNotification> {
+
   final GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   final PostDeets notifs;
   _ScheduleNotificationState(this.notifs);
+  static const Color indigo = const Color(0xff303E84);
 
   //code to initialize plugin
   @override
@@ -36,26 +38,35 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
 
   @override
   Widget build(BuildContext context) {
+
     return
-            Center(
+            Container(
+              height: 60,
               child: RaisedButton(
-                color: Colors.indigo[700],
-                elevation: 3,
-                highlightElevation: 6,
+                color: indigo,
+                elevation: 6,
+
                 onPressed: ()
                 {
                   _scheduleNotification();
                   Fluttertoast.showToast(
                       msg: "SUCCESSFUL",
                     toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    backgroundColor: Colors.indigo[700],
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: indigo,
                     textColor: Colors.white
                   );
+
                   },
-                child: Text(
-                    'Schedule Notification?',style: TextStyle(
-                    color: Colors.white,fontStyle: FontStyle.italic,fontWeight: FontWeight.w600),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'Notify me ',style: TextStyle( color: Colors.white, fontStyle: FontStyle.italic, fontSize: 18),
+                    ),
+                    IconButton(icon: SvgPicture.asset('assets/bell.svg')),
+
+                  ],
                 ),
                 ),
             );
