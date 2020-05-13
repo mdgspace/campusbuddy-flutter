@@ -62,7 +62,7 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      'Notify me ',style: TextStyle( color: Colors.white, fontStyle: FontStyle.italic, fontSize: 18),
+                      'Notify me ',style: TextStyle( color: Colors.white, fontSize: 18),
                     ),
                     IconButton(icon: SvgPicture.asset('assets/bell.svg')),
 
