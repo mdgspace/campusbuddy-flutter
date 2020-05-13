@@ -46,11 +46,12 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
                 color: indigo,
                 elevation: 6,
 
-                onPressed: ()
+                onPressed: () async
+
                 {
-                  _scheduleNotification();
+                  await _scheduleNotification();
                   Fluttertoast.showToast(
-                      msg: "SUCCESSFUL",
+                      msg: "You will get a notification thirty minutes before the event!!",
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.CENTER,
                     backgroundColor: indigo,
@@ -75,7 +76,7 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
 
 //method to schedule notifications, give it date and time arguments retrieved from db
   Future<void> _scheduleNotification() async {
-    var scheduledNotificationDateTime = notifs.time.add(Duration(seconds: 5));
+    var scheduledNotificationDateTime = notifs.time.subtract(Duration(minutes: 30));
     var androidPlatformChannelSpecifics =
     AndroidNotificationDetails('campusbuddy',
         'campusbuddy', 'campusbuddy');

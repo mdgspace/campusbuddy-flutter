@@ -107,7 +107,7 @@ class DepartmentListPage extends StatelessWidget {
                     heightFactor: 10,
                     widthFactor: 10,
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(Colors.blue),
+                      valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
                     ),
                   ),
                 );
