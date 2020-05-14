@@ -1,8 +1,12 @@
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:campusbuddy/notification.dart';
 import 'package:campusbuddy/calendar.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'dart:async';
+
 
 class Post extends StatefulWidget {
   final PostDeets postDeets;
@@ -13,138 +17,121 @@ class Post extends StatefulWidget {
 }
 
 class _PostState extends State<Post> {
-
+  static const Color black = const Color(0xff242424);
+  static const Color indigo = const Color(0xff303E84);
   PostDeets deets;
   _PostState(this.deets);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0,30.0,0.0,0.0),
-                  child: Container(
-                      width: double.infinity,
-                      child: Align(  alignment: Alignment.center,
-                        child: Text(deets.group ,style: TextStyle(color: Colors.indigo[900],fontSize: 30,fontWeight: FontWeight.w400,
-                            fontFamily: 'Roboto')),
-                      )),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0,10.0, 0, 0),
-                  child: Container(
-                      width: double.infinity,
-                      child: Align( alignment: Alignment.center,
-                        child: Text("Brings to You",style: TextStyle(color: Colors.black,fontSize: 20,fontStyle: FontStyle.italic,fontWeight: FontWeight.w700,
-                        fontFamily: 'Roboto')),)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: Container(
-                    width: double.infinity,
-                    child: Align(  alignment: Alignment.center,
-                      child: Text(deets.title,style: TextStyle(color: Colors.indigo[800],fontSize: 30,fontWeight: FontWeight.w600,
-                          fontFamily: 'Roboto')),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            floating: true,
+            pinned: true,
+            snap: true,
+            expandedHeight: 210.0,
+            backgroundColor: indigo,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+                title: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
+                  child: Text(
+                    '${deets.group}',
+                    style: TextStyle(
+                      fontSize:14,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Roboto',
+                      color: Colors.white,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                SizedBox(height: 20),
-                Row(
-                    children: <Widget>[
-                      Expanded(
-                          child: Container(color: Colors.indigo[700],
-                              height: 50,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Center(child: Text('DATE:' ,
-                                        style: TextStyle(color: Colors.white,
-                                            fontSize: 14,
-                                            fontFamily: 'Roboto'
-                                        ))),
-                                    SizedBox(height: 3,),
-                                    Center(child: Text('${DateFormat("dd-MM-yyyy").format(deets.time)}' ,
-                                        style: TextStyle(color: Colors.white,
-                                            fontSize: 15,
-                                            fontStyle: FontStyle.italic,
-                                            fontFamily: 'Roboto' ))),
-                                  ])
-                          ), flex:1
-                      ),
-
-                      Expanded(
-                          child: Container(color: Colors.indigo[700],
-                              height: 50,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Center(child: Text('TIME:' ,style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontFamily: 'Roboto'))),
-                                  SizedBox(height: 3,),
-                                  Center(child: Text('${DateFormat.jm().format(deets.time)}' ,style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      fontStyle: FontStyle.italic,
-                                      fontFamily: 'Roboto'))),
-                                ],
-                              )
-                          ), flex:1
-                      ),
-
-                      Expanded(child: Container(color: Colors.indigo[700],
-                          height: 50,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Center(child: Text("VENUE: " ,
-                                  style: TextStyle(color: Colors.white,
-                                      fontSize: 13,
-                                      fontFamily: 'Roboto'))),
-                              SizedBox(height: 3,),
-                              Center(child: Text( deets.venue ,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.white,
-                                      fontSize: 14,
-                                      fontStyle: FontStyle.italic,
-                                      fontFamily: 'Roboto'))),
-                            ],)
-                      ),flex: 1,),
-                    ]),
-                SizedBox(height: 20),
-
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.indigo[900]),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),child: Image.network('${deets.imgURL}')
-                ),
-
-                ButtonBar(
-                  alignment: MainAxisAlignment.center,
+                background: Center(
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage('${deets.imgURL}'),)
+                    ),
+                  ),
+                )
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Material(
+              color: Colors.white,
+              child: Container(
+                height: 1000,
+                child: Column(
                   children: <Widget>[
-                    ScheduleNotification(deets),
-                    Calendar(deets),
-                  ],),
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(deets.desc, style: TextStyle(color: Colors.black,fontSize: 15,
-                        fontFamily: 'Roboto')
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 20, 0, 10),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              child: Text(
+                                  deets.title,textAlign: TextAlign.left,
+                                  style: TextStyle(color: indigo,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Roboto')),
+                            ),flex: 4,
+                          ),
+                          Expanded(
+                            child: IconButton (
+                              icon: new SvgPicture.asset('assets/facebookLogo.svg'),
+                              iconSize: 40,
+                              onPressed: _launchURL,
+                            ),flex: 1,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+
+                    Padding( padding: const EdgeInsets.all(10.0),
+                      child: Linkify(
+                        onOpen: _onOpen,
+                          text:"${deets.desc}",
+                          style: TextStyle(
+                            color: black,
+                          fontSize: 19,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Roboto',
+                          height: 1.8,),
+                      ),
+                    ),
+                  ],
                 ),
-              ]),
-        ),
+              ),
+            ),
+          ),
+        ],
       ),
+      bottomNavigationBar:Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(child: ScheduleNotification(deets)),
+          Container( width:0.4,height: 60,color: Colors.white, ),
+          Expanded(child: Calendar(deets)),
+        ],) ,
     );
+
+
+  }
+}
+_launchURL() async {
+  const url = 'https://www.facebook.com/';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
   }
 }
 
@@ -152,4 +139,11 @@ class PostDeets{
   String title, venue, desc, imgURL, group; DateTime time;
   PostDeets(this.title, this.time, this.venue, this.desc, this.imgURL,
       this.group);
+}
+ Future<void>_onOpen(LinkableElement link) async {
+  if (await canLaunch(link.url)) {
+    await launch(link.url);
+  } else {
+    throw 'Could not launch $link';
+  }
 }
