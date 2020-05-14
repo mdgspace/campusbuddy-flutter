@@ -126,8 +126,8 @@ class ContactList extends StatelessWidget {
                                     children: [
                                       Flexible(
                                         child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.start,
+
+                                          mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Padding(
                                                 padding: EdgeInsets.fromLTRB(
