@@ -1,12 +1,15 @@
+import 'package:campusbuddy/ContactScreens/ContactList.dart';
 import 'package:campusbuddy/post_screen/post.dart';
 import 'package:campusbuddy/post_screen/post2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:timeago/timeago.dart' as timeago;
+
 class PostList extends StatefulWidget {
   static const Color color = const Color(0xff303e84);
-
+ static final svgArrowIcon=ContactList.svgArrowIcon;
   @override
   _PostListState createState() => _PostListState();
 }
@@ -20,13 +23,20 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
       appBar:  AppBar(
         backgroundColor: PostList.color,
         elevation: 0,
-        title:Text('Feed'),
-      centerTitle: true,
+        title:Text('Campus Updates'),
       bottom: new TabBar(
+       indicatorColor: Colors.white,
           controller: _tabController,
           tabs: <Tab>[
-        new Tab(icon: Text('Posts'),),
-        new Tab(icon: Text('Events'),),
+        new Tab(icon: Text('Posts',
+          style: TextStyle(
+              fontSize: 20.sp
+          ),),),
+        new Tab(icon: Text('Events',
+        style: TextStyle(
+          fontSize: 20.sp
+        ),
+        ),),
       ]),
       ),
       body: new TabBarView(
@@ -56,23 +66,24 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
             .snapshots(),
         builder:
             (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) return SliverFillRemaining();
+          if (snapshot.hasError) return Text('');
           if (snapshot.data == null ||
               snapshot.data.documents == null ||
               snapshot.data.documents.length == 0)
             return Center(
                 heightFactor: 10,
                 widthFactor: 10,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.blue),
-                ),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
+              ),
               );
           else
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (BuildContext context,int index){
-                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], null, null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
-                  return getCard(postDeets);
+                  DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
+                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], null,null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
+                  return getCard(postDeets,postedAt);
             });
         },
       ),
@@ -87,7 +98,7 @@ Widget events(){
             .snapshots(),
         builder:
             (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) return SliverFillRemaining();
+          if (snapshot.hasError) return Text('');
           if (snapshot.data == null ||
               snapshot.data.documents == null ||
               snapshot.data.documents.length == 0)
@@ -95,7 +106,7 @@ Widget events(){
               heightFactor: 10,
               widthFactor: 10,
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.blue),
+                valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
               ),
             );
           else
@@ -103,15 +114,22 @@ Widget events(){
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (BuildContext context,int index){
                   DateTime timestamp=(snapshot.data.documents[index]['scheduled_at']).toDate();
+                  DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
                   PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], timestamp, snapshot.data.documents[index]['venue'], snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
-              return getCard(postDeets);
+              return getCard(postDeets,postedAt);
             });
         },
       ),
     );
 }
-Widget getCard(PostDeets postDeets){
-  String createdBy=postDeets.group,title=postDeets.title, scheduleAt=postDeets.venue, src=postDeets.imgURL;
+Widget getCard(PostDeets postDeets,DateTime postedAt){
+  String createdBy="",title="", scheduleAt="", src="";
+  String timePast= timeago.format(postedAt);
+  print(timeago.format(postedAt));
+  createdBy=postDeets.group;title=postDeets.title;
+  if(postDeets.venue!=null){
+  scheduleAt=postDeets.venue;}
+  src=postDeets.imgURL;
     if(src==null || src=="") src="https://lh3.googleusercontent.com/ZDoNo4_cS_KW0B0fKdM3LIkEwfh8LSa6pAnsYKfehdsYlX64DmueZGOTNdXRlo7ccNE";
     return GestureDetector(
       onTap: (){
@@ -124,70 +142,90 @@ Widget getCard(PostDeets postDeets){
       },
       child: Container(
         child: Card(
-          elevation: 10,
-          child:Container(
-              child: Padding(
-              padding: EdgeInsets.fromLTRB(12, 16, 0, 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Expanded(
-                        child: AspectRatio(
-                          aspectRatio: 1/1,
-                          child: Padding(
-                            padding: EdgeInsets.all(4),
-                            child: Image(
-                              image: NetworkImage(src,),
-                              fit: BoxFit.fill,
+          elevation: 3,
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(11, 18, 17, 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Flexible(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                                height: 42.h,
+                                width: 42.w,
+                              padding: EdgeInsets.all(11.sp),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image:new DecorationImage(image: NetworkImage(src,),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                          ),
-                        )
-                    ),
-                    SizedBox(
-                      width: 5.0,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Container(
-                          child: Text(
-                            '$createdBy',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: ScreenUtil().setSp(20),
-                              color: Colors.black87
-                              )
-                          ),
+                            SizedBox(
+                              width: 17.0.w,
+                            ),
+                            Flexible(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      '$createdBy',
+                                      style: TextStyle(
+                                          fontFamily:'Roboto',
+                                          fontSize: ScreenUtil().setSp(12),
+                                        color: Color(0xFF3B3B3B)
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  SizedBox(
+                                    height: 5.25.h,
+                                  ),
+                                  Text(
+                                      '$title',
+                                    style: TextStyle(
+                                        fontFamily:'Roboto',
+                                        fontSize: ScreenUtil().setSp(17.52),
+                                      color: Colors.black87
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.left,
+                                  ),
 
-                        ),
-                        SizedBox(
-                          height: 5.25.h,
-                        ),
-                        Text(
-                            'Title : $title',
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(17.52),
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.25.h,
-                        ),
-                        Text(
-                            '$scheduleAt',
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                                ],
 
-                    ),
-                  ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          ContactList.svgArrowIcon,
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(25, 12, 0, 0),
+                            child: Text('$timePast' ,
+                              style: TextStyle(
+                                fontFamily:'Roboto',
+                                fontSize: ScreenUtil().setSp(12),
+                                color: Color(0xFF3B3B3B),
+                            ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ),
 
         ),
-        padding: EdgeInsets.fromLTRB(8, 10, 8, 0),
+        padding: EdgeInsets.fromLTRB(14, 8, 14, 0),
       ),
     );
 }

@@ -46,9 +46,12 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
                 color: indigo,
                 elevation: 6,
 
-                onPressed: ()
+                onPressed: () async
+
                 {
+
                   Alertdialog();
+
                   },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -66,6 +69,7 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
 
 
 //method to schedule notifications, give it date and time arguments retrieved from db
+
   Future<void> _scheduleNotification15() async {
     var scheduledNotificationDateTime = (notifs.time).subtract(Duration(minutes: 15));
     var androidPlatformChannelSpecifics =
