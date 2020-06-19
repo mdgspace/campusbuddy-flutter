@@ -126,16 +126,37 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
             FlatButton(child: Center(child: Text("15 minutes before Event",style: TextStyle(color: Colors.blue[700],fontSize: 20),)),
               onPressed: (){
                 _scheduleNotification15();
+                Fluttertoast.showToast(
+                    msg: "SUCCESSFUL",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: indigo,
+                    textColor: Colors.white
+                );
               },
             ),
             FlatButton(child: Center(child: Text("30 minutes before Event",style: TextStyle(color: Colors.blue[700],fontSize: 20),)),
               onPressed: (){
                 _scheduleNotification30();
+                Fluttertoast.showToast(
+                    msg: "SUCCESSFUL",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: indigo,
+                    textColor: Colors.white
+                );
               },
             ),
             FlatButton(child: Center(child: Text("1 Hour before Event",style: TextStyle(color: Colors.blue[700],fontSize: 20),)),
               onPressed: (){
                 _scheduleNotification1H();
+                Fluttertoast.showToast(
+                    msg: "SUCCESSFUL",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: indigo,
+                    textColor: Colors.white
+                );
               },
             )
           ],
