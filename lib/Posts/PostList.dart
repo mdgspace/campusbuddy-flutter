@@ -10,17 +10,47 @@ import 'package:timeago/timeago.dart' as timeago;
 class PostList extends StatefulWidget {
   static const Color color = const Color(0xff303e84);
  static final svgArrowIcon=ContactList.svgArrowIcon;
+  static int inbet=0,ineve=0;
   @override
   _PostListState createState() => _PostListState();
 }
 
 class _PostListState extends State<PostList>  with SingleTickerProviderStateMixin{
   String dropdownValue="None";
-  TabController _tabController;
+TabController _tabController;
   List<String> items;
   String filter;
   @override
   Widget build(BuildContext context) {
+    if(PostList.inbet>0){
+      Firestore.instance
+          .collection('Posts').orderBy('created_at',descending: true)
+          .snapshots()
+          .listen((snapshot) {
+            if(PostList.inbet>0){
+              PostList.inbet--;
+              nextFetch(snapshot.documents[PostList.inbet].documentID);
+            }
+      });
+        PostList.inbet=0;
+    }
+    if(PostList.ineve>0){
+      Firestore.instance
+          .collection('Events').orderBy('created_at',descending: true)
+          .snapshots()
+          .listen((snapshot) {
+        if(PostList.ineve>0){
+          PostList.ineve--;
+          try {
+            nextFetcheve(snapshot.documents[PostList.ineve].documentID);
+          }
+          catch(dynamic) {
+            PostList.ineve=0;
+          }
+        }
+      });
+        PostList.ineve=0;
+    }
     ScreenUtil.init(context, allowFontScaling: true, width: 410, height: 703);
     return Scaffold(
       appBar:  AppBar(
@@ -79,7 +109,12 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
       ),
     );
   }
-
+  void nextFetch(dynamic str){
+    Firestore.instance.collection('Posts').document(str).updateData({'read':true});
+  }
+  void nextFetcheve(dynamic str){
+    Firestore.instance.collection('Events').document(str).updateData({'read':true});
+  }
   TabController getTabController() {
     return TabController(length: 2,vsync:this);
   }
@@ -88,6 +123,7 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
   void initState() {
     super.initState();
     _tabController = getTabController();
+
   }
 
   Widget posts(){
@@ -114,9 +150,12 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (BuildContext context,int index){
                   DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
-                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], null,null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
+                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], null,null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by'],snapshot.data.documents[index]['read']);
+                  if(!snapshot.data.documents[index]['read']){PostList.inbet++;}
                   return dropdownValue=="None"?getCard(postDeets,postedAt):(dropdownValue==postDeets.group)?getCard(postDeets,postedAt):new Container();
-            });
+            }
+
+            );
         },
       ),
     );
@@ -147,7 +186,10 @@ Widget events(){
                 itemBuilder: (BuildContext context,int index){
                   DateTime timestamp=(snapshot.data.documents[index]['scheduled_at']).toDate();
                   DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
-                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], timestamp, snapshot.data.documents[index]['venue'], snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
+                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], timestamp, snapshot.data.documents[index]['venue'], snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by'],snapshot.data.documents[index]['read']);
+                  if(!snapshot.data.documents[index]['read']){
+                    PostList.ineve++;
+                  }
                   return dropdownValue=="None"?getCard(postDeets,postedAt):(dropdownValue==postDeets.group)?getCard(postDeets,postedAt):new Container();
             });
         },
@@ -157,7 +199,6 @@ Widget events(){
 Widget getCard(PostDeets postDeets,DateTime postedAt){
   String createdBy="",title="", scheduleAt="", src="";
   String timePast= timeago.format(postedAt);
-  print(timeago.format(postedAt));
   createdBy=postDeets.group;title=postDeets.title;
   if(postDeets.venue!=null){
   scheduleAt=postDeets.venue;}
@@ -174,6 +215,11 @@ Widget getCard(PostDeets postDeets,DateTime postedAt){
       },
       child: Container(
         child: Card(
+          shape: !postDeets.read?RoundedRectangleBorder(
+        side: new BorderSide(color: Colors.blue, width: 2.0),
+          borderRadius: BorderRadius.circular(4.0)):RoundedRectangleBorder(
+              side: new BorderSide(color: Colors.white, width: 2.0),
+              borderRadius: BorderRadius.circular(4.0)),
           elevation: 3,
                 child: Container(
                   padding: EdgeInsets.fromLTRB(11, 18, 17, 16),

@@ -137,8 +137,9 @@ _launchURL() async {
 
 class PostDeets{
   String title, venue, desc, imgURL, group; DateTime time;
+  bool read;
   PostDeets(this.title, this.time, this.venue, this.desc, this.imgURL,
-      this.group);
+      this.group,this.read);
 }
  Future<void>_onOpen(LinkableElement link) async {
   if (await canLaunch(link.url)) {
