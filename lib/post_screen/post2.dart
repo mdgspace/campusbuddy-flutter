@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'post.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -57,18 +58,18 @@ class _Post2State extends State<Post2> {
                 child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      padding: const EdgeInsets.fromLTRB(10, 20, 0, 10),
                       child: Row(
                         children: <Widget>[
                           Expanded(
                             child: Container(
-                              child: Align(  alignment: Alignment.topLeft,
-                                child: Text(postDeets2.title,textAlign: TextAlign.left ,
-                                    style: TextStyle(color: indigo,
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: 'Roboto')),
-                              ),
+                              child: Text(
+                                  postDeets2.title,
+                                  textAlign: TextAlign.left ,
+                                  style: TextStyle(color: indigo,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Roboto')),
                             ),flex: 4,
                           ),
                           Expanded(
@@ -83,13 +84,14 @@ class _Post2State extends State<Post2> {
                     ),
 
                     Padding( padding: const EdgeInsets.all(10.0),
-                      child: Text(postDeets2.desc,
-                          style: TextStyle(color: black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.normal,
-                            fontFamily: 'Roboto',
-                            height: 1.5,
-                          )),
+                      child: Linkify(
+                        text: "${postDeets2.desc}",
+                        style: TextStyle(color: black,
+                          fontSize: 19,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Roboto',
+                          height: 1.8,),
+                      ),
                     ),
                   ],
                 ),

@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:campusbuddy/notification.dart';
 import 'package:campusbuddy/calendar.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'dart:async';
+
 
 class Post extends StatefulWidget {
   final PostDeets postDeets;
@@ -37,7 +40,8 @@ class _PostState extends State<Post> {
                   child: Text(
                     '${deets.group}',
                     style: TextStyle(
-                      fontSize:18,
+                      fontSize:14,
+                      fontWeight: FontWeight.w500,
                       fontFamily: 'Roboto',
                       color: Colors.white,
                     ),
@@ -46,8 +50,8 @@ class _PostState extends State<Post> {
                 ),
                 background: Center(
                   child: Container(
-                    width: 130,
-                    height: 130,
+                    width: 120,
+                    height: 120,
                     decoration: new BoxDecoration(
                         shape: BoxShape.circle,
                         image: new DecorationImage(
@@ -66,18 +70,17 @@ class _PostState extends State<Post> {
                 child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      padding: const EdgeInsets.fromLTRB(10, 20, 0, 10),
                       child: Row(
                         children: <Widget>[
                           Expanded(
                             child: Container(
-                              child: Align(  alignment: Alignment.topLeft,
-                                child: Text(deets.title,textAlign: TextAlign.left ,
-                                    style: TextStyle(color: indigo,
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: 'Roboto')),
-                              ),
+                              child: Text(
+                                  deets.title,textAlign: TextAlign.left,
+                                  style: TextStyle(color: indigo,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Roboto')),
                             ),flex: 4,
                           ),
                           Expanded(
@@ -92,13 +95,16 @@ class _PostState extends State<Post> {
                     ),
 
                     Padding( padding: const EdgeInsets.all(10.0),
-                      child: Text(deets.desc,
-                          style: TextStyle(color: black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.normal,
-                            fontFamily: 'Roboto',
-                            height: 1.5,
-                          )),
+                      child: Linkify(
+                        onOpen: _onOpen,
+                          text:"${deets.desc}",
+                          style: TextStyle(
+                            color: black,
+                          fontSize: 19,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Roboto',
+                          height: 1.8,),
+                      ),
                     ),
                   ],
                 ),
@@ -133,4 +139,11 @@ class PostDeets{
   String title, venue, desc, imgURL, group; DateTime time;
   PostDeets(this.title, this.time, this.venue, this.desc, this.imgURL,
       this.group);
+}
+ Future<void>_onOpen(LinkableElement link) async {
+  if (await canLaunch(link.url)) {
+    await launch(link.url);
+  } else {
+    throw 'Could not launch $link';
+  }
 }

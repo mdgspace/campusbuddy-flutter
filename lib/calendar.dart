@@ -46,7 +46,7 @@ class _CalendarState extends State<Calendar> {
               children: <Widget>[
                 Expanded(
                   child: Text('Add to Calendar ', style: TextStyle(
-                      color: Colors.white,fontStyle: FontStyle.italic,fontSize: 17
+                      color: Colors.white,fontSize: 17
                   ),),
                 ),
                 IconButton
