@@ -48,9 +48,7 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
                 highlightElevation: 6,
                 onPressed: () async
                 {
-
                   Alertdialog();
-
                   },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -136,6 +134,7 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
                     backgroundColor: indigo,
                     textColor: Colors.white
                 );
+                Navigator.pop(context);
               },
             ),
             FlatButton(child: Center(child: Text("30 minutes before Event",style: TextStyle(color: Colors.blue[700],fontSize: 20),)),
@@ -148,6 +147,7 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
                     backgroundColor: indigo,
                     textColor: Colors.white
                 );
+                Navigator.pop(context);
               },
             ),
             FlatButton(child: Center(child: Text("1 Hour before Event",style: TextStyle(color: Colors.blue[700],fontSize: 20),)),
@@ -160,6 +160,7 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
                     backgroundColor: indigo,
                     textColor: Colors.white
                 );
+                Navigator.pop(context);
               },
             )
           ],
