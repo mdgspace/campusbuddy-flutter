@@ -15,7 +15,10 @@ class PostList extends StatefulWidget {
 }
 
 class _PostListState extends State<PostList>  with SingleTickerProviderStateMixin{
+  String dropdownValue="None";
   TabController _tabController;
+  List<String> items;
+  String filter;
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, allowFontScaling: true, width: 410, height: 703);
@@ -39,12 +42,41 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
         ),),
       ]),
       ),
-      body: new TabBarView(
-          controller: _tabController,
-          children: <Widget>[
-            posts(),
-            events()
-      ]),
+      body: Column(
+        children: <Widget>[
+        DropdownButton<String>(
+          value: dropdownValue,
+            icon: Icon(Icons.filter_list),
+          iconSize: 24,
+          elevation: 16,
+          style: TextStyle(color: Colors.deepPurple),
+            underline: Container(
+              height: 2,
+              color: Colors.deepPurpleAccent,
+        ),
+          onChanged: (String newValue) {
+            setState(() {
+              dropdownValue = newValue;
+          });
+        },
+          items: <String>['None','Mobile development group', 'Information Management Group', 'Vision and Language Group']
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+          );
+        }).toList(),
+      ),
+          Flexible(
+            child: new TabBarView(
+                controller: _tabController,
+                children: <Widget>[
+                  posts(),
+                  events()
+            ]),
+          ),
+        ],
+      ),
     );
   }
 
@@ -83,7 +115,7 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
                 itemBuilder: (BuildContext context,int index){
                   DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
                   PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], null,null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
-                  return getCard(postDeets,postedAt);
+                  return dropdownValue=="None"?getCard(postDeets,postedAt):(dropdownValue==postDeets.group)?getCard(postDeets,postedAt):new Container();
             });
         },
       ),
@@ -116,7 +148,7 @@ Widget events(){
                   DateTime timestamp=(snapshot.data.documents[index]['scheduled_at']).toDate();
                   DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
                   PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], timestamp, snapshot.data.documents[index]['venue'], snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
-              return getCard(postDeets,postedAt);
+                  return dropdownValue=="None"?getCard(postDeets,postedAt):(dropdownValue==postDeets.group)?getCard(postDeets,postedAt):new Container();
             });
         },
       ),
