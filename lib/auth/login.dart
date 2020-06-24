@@ -56,6 +56,7 @@ class _LoginState extends State<Login> {
           _isLoading = false;
         });
 
+
         if (userId != null && userId.length > 0) {
           widget.loginCallback();
           Navigator.of(context).pushNamedAndRemoveUntil(

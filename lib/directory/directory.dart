@@ -21,6 +21,7 @@ class _DirectoryState extends State<Directory> {
   final List<Widget> _children =[
     DirectoryList(),
     PostList(),
+    //Blank()
     Blank()
   ];
 

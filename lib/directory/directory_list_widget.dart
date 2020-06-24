@@ -1,13 +1,51 @@
+import 'dart:convert';
 
 import 'package:campusbuddy/screens/department_list.dart';
+import 'package:campusbuddy/search_feature/contact_view.dart';
+import 'package:campusbuddy/search_feature/model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:campusbuddy/auth/root_page.dart';
 import 'package:campusbuddy/auth/auth.dart';
+import 'package:campusbuddy/search_feature/search_view.dart';
+import 'package:http/http.dart' as http;
 
-class DirectoryList extends StatelessWidget {
+
+class DirectoryList extends StatefulWidget {
+  @override
+  _DirectoryListState createState() => _DirectoryListState();
+}
+
+class _DirectoryListState extends State<DirectoryList> {
   Auth auth= new Auth();
+
+  List<Contact> contactList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    print('went here');
+    loadData();
+    print('data loaded');
+  }
+
+  void loadData() async
+  {
+    http.Response response = await http.get(
+        "https://raw.githubusercontent.com/mdg-iitr/CampusBuddy/master/app/src/main/assets/contacts.min.json");
+    final jsonResponse = groupsFromJson(response.body);
+    for (int i = 0; i < jsonResponse.length; i++) {
+      List<Department> departmentList = jsonResponse[i].depts;
+      for (int j = 0; j < departmentList.length; j++) {
+        for (int k = 0; k < departmentList[j].contacts.length; k++) {
+          departmentList[j].contacts[k].department_name =
+              departmentList[j].deptName;
+        }
+        contactList = contactList + departmentList[j].contacts;
+      }
+    }
+  }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Card(
@@ -67,7 +105,17 @@ class DirectoryList extends StatelessWidget {
                 onPressed: () async {
                   //  final int selected = await showSearch<int>();
                   showConfirmationDialog(context);
-
+                }
+            ),
+            IconButton(
+                tooltip: 'search',
+                icon: const Icon(Icons.search),
+                onPressed: () async {
+                  // showConfirmationDialog(context);
+                  showSearch(
+                    context: context,
+                    delegate: CustomSearchDelegate(contactList: contactList),
+                  );
                 }
             ),
           ],
