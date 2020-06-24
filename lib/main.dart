@@ -2,7 +2,6 @@ import 'package:campusbuddy/auth/auth.dart';
 import 'package:campusbuddy/auth/root_page.dart';
 import 'package:campusbuddy/generate_route.dart';
 import 'package:flutter/material.dart';
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
