@@ -1,3 +1,5 @@
+import 'package:campusbuddy/auth/user.dart';
+
 import 'globals.dart';
 import 'root_page.dart';
 import 'package:flutter/material.dart';
@@ -52,16 +54,16 @@ class _SignupPageState extends State<SignupPage> {
       try {
         userId = await widget.auth.signUp(_email, _password);
         print('Signed up user: $userId');
-
-
         setState(() {
           _isLoading = false;
         });
-
+        widget.auth.createUser(User(id:userId,email: _email));
         if (userId != null && userId.length > 0) {
          // widget.loginCallback();
          showDialogBox();
         }
+
+
       } catch (e) {
         print('Error: $e');
         Fluttertoast.showToast(

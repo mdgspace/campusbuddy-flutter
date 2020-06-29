@@ -1,3 +1,5 @@
+import 'package:campusbuddy/auth/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 
@@ -31,6 +33,16 @@ class Auth{
   @override
   Future<void> resetPassword(String email) async {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
+  Future createUser(User user) async {
+    try {
+       CollectionReference _usersCollectionReference =
+      Firestore.instance.collection("users");
+      await _usersCollectionReference.document(user.id).setData(user.toJson());
+    } catch (e) {
+      return e.message;
+    }
   }
 
 }
