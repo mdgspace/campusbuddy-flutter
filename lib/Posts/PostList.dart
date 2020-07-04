@@ -1,20 +1,25 @@
 import 'package:campusbuddy/ContactScreens/ContactList.dart';
 import 'package:campusbuddy/post_screen/post.dart';
 import 'package:campusbuddy/post_screen/post2.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:campusbuddy/auth/auth.dart';
 
 class PostList extends StatefulWidget {
   static const Color color = const Color(0xff303e84);
  static final svgArrowIcon=ContactList.svgArrowIcon;
+ static int totReadPost=0,totReadEvent=0;
   @override
   _PostListState createState() => _PostListState();
 }
 
 class _PostListState extends State<PostList>  with SingleTickerProviderStateMixin{
+  int totPost=0,totEvent=0;
+  bool postSelect=false,eventSelect=false;
   String dropdownValue="None";
   TabController _tabController;
   List<String> items;
@@ -88,6 +93,12 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
   void initState() {
     super.initState();
     _tabController = getTabController();
+    totPostEventCount(totPost,0).then((value){
+      setState((){
+        print("///");
+        print(PostList.totReadPost);
+      });
+    });
   }
 
   Widget posts(){
@@ -109,20 +120,39 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
                 valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
               ),
               );
-          else
+          else {
+            totPost=snapshot.data.documents.length;
+            totPostEventCount(totPost,1);
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
-                itemBuilder: (BuildContext context,int index){
-                  DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
-                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], null,null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
-                  return dropdownValue=="None"?getCard(postDeets,postedAt):(dropdownValue==postDeets.group)?getCard(postDeets,postedAt):new Container();
-            });
+                itemBuilder: (BuildContext context, int index) {
+                  if(totPost!=PostList.totReadPost){
+                    postSelect=true;
+                    PostList.totReadPost++;
+                  }
+                  else{
+                    postSelect=false;
+                  }
+                  DateTime postedAt = (snapshot.data
+                      .documents[index]['created_at']).toDate();
+                  PostDeets postDeets = new PostDeets(
+                      snapshot.data.documents[index]['title'], null, null,
+                      snapshot.data.documents[index]['description'],
+                      snapshot.data.documents[index]['image'],
+                      snapshot.data.documents[index]['created_by']);
+                  return dropdownValue == "None"
+                      ? getCard(postDeets, postedAt,postSelect)
+                      : (dropdownValue == postDeets.group) ? getCard(
+                      postDeets, postedAt,postSelect) : new Container();
+
+                });
+          }
         },
       ),
     );
 }
 
-Widget events(){
+Widget events() {
     return Container(
       child: StreamBuilder<QuerySnapshot>(
         stream: Firestore.instance
@@ -141,20 +171,40 @@ Widget events(){
                 valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
               ),
             );
-          else
+          else {
+            totEvent=snapshot.data.documents.length;
+            totPostEventCount(totEvent,2);
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
-                itemBuilder: (BuildContext context,int index){
-                  DateTime timestamp=(snapshot.data.documents[index]['scheduled_at']).toDate();
-                  DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
-                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], timestamp, snapshot.data.documents[index]['venue'], snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
-                  return dropdownValue=="None"?getCard(postDeets,postedAt):(dropdownValue==postDeets.group)?getCard(postDeets,postedAt):new Container();
-            });
+                itemBuilder: (BuildContext context, int index) {
+                  DateTime timestamp = (snapshot.data
+                      .documents[index]['scheduled_at']).toDate();
+                  DateTime postedAt = (snapshot.data
+                      .documents[index]['created_at']).toDate();
+                  PostDeets postDeets = new PostDeets(
+                      snapshot.data.documents[index]['title'], timestamp,
+                      snapshot.data.documents[index]['venue'],
+                      snapshot.data.documents[index]['description'],
+                      snapshot.data.documents[index]['image'],
+                      snapshot.data.documents[index]['created_by']);
+                  if(totEvent!=PostList.totReadEvent){
+                    eventSelect=true;
+                    PostList.totReadEvent++;
+                  }
+                  else{
+                    eventSelect=false;
+                  }
+                  return dropdownValue == "None"
+                      ? getCard(postDeets, postedAt,eventSelect)
+                      : (dropdownValue == postDeets.group) ? getCard(
+                      postDeets, postedAt,eventSelect) : new Container();
+                });
+          }
         },
       ),
     );
 }
-Widget getCard(PostDeets postDeets,DateTime postedAt){
+Widget getCard(PostDeets postDeets,DateTime postedAt,bool selected){
   String createdBy="",title="", scheduleAt="", src="";
   String timePast= timeago.format(postedAt);
   print(timeago.format(postedAt));
@@ -175,6 +225,13 @@ Widget getCard(PostDeets postDeets,DateTime postedAt){
       child: Container(
         child: Card(
           elevation: 3,
+          shape: selected
+              ? new RoundedRectangleBorder(
+              side: new BorderSide(color: Colors.blue, width: 2.0),
+              borderRadius: BorderRadius.circular(4.0))
+              : new RoundedRectangleBorder(
+              side: new BorderSide(color: Colors.white, width: 2.0),
+              borderRadius: BorderRadius.circular(4.0)),
                 child: Container(
                   padding: EdgeInsets.fromLTRB(11, 18, 17, 16),
                   child: Row(
@@ -261,5 +318,29 @@ Widget getCard(PostDeets postDeets,DateTime postedAt){
       ),
     );
 }
+Future totPostEventCount(int x,int update) async{
+    Auth auth=new Auth();
+  final FirebaseUser user = await auth.getCurrentUser();
+    final uid = user.uid;
+    // here you write the codes to input the data into firestore
+    var document = await Firestore.instance.collection('users').document(uid);
+      document.get().then((value){
+        print(value.data["readPost"]);
+        print(value.data["readEvent"]);
+        PostList.totReadEvent=value.data["readEvent"];
+        print("hurreh");
+        PostList.totReadPost=value.data["readPost"];
+      });
+      if(update==1) {
+        document
+            .updateData({"readPost": x
+        });
+      }
+       else if(update==2){ document
+            .updateData({"readEvent": x
+        });
+      }
+}
+
 }
 
