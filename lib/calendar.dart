@@ -1,14 +1,14 @@
 
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'post_screen/post.dart';
+import 'post_screen/events.dart';
 import 'package:flutter/material.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 
 //void main() => runApp(Calendar());
 
 class Calendar extends StatefulWidget {
-  final PostDeets calendar;
+  final Deets calendar;
 
   Calendar(this.calendar);
 

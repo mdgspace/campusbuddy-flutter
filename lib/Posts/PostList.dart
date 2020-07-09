@@ -1,11 +1,14 @@
 import 'package:campusbuddy/ContactScreens/ContactList.dart';
-import 'package:campusbuddy/post_screen/post.dart';
-import 'package:campusbuddy/post_screen/post2.dart';
+import 'package:campusbuddy/post_screen/events.dart';
+import 'package:campusbuddy/post_screen/posts.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:campusbuddy/auth/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PostList extends StatefulWidget {
   static const Color color = const Color(0xff303e84);
@@ -15,10 +18,16 @@ class PostList extends StatefulWidget {
 }
 
 class _PostListState extends State<PostList>  with SingleTickerProviderStateMixin{
+
   String dropdownValue="None";
   TabController _tabController;
   List<String> items;
   String filter;
+  final Firestore _db = Firestore.instance;
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, allowFontScaling: true, width: 410, height: 703);
@@ -88,7 +97,66 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
   void initState() {
     super.initState();
     _tabController = getTabController();
+
+    _saveDeviceToken();
+    _fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            content: ListTile(
+              title: Text(message['notification']['title']),
+              subtitle: Text(message['notification']['body']),
+            ),
+            actions: <Widget>[
+
+              FlatButton(
+                color: Colors.indigo,
+                child: Text('Ok'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+        // TODO optional
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+        // TODO optional
+      },
+    );
   }
+  _saveDeviceToken() async {
+    // Get the current userID
+
+    final FirebaseUser user = await auth.currentUser();
+    final uid = user.uid;
+    print(uid);
+
+    // Then get the token for this device
+    String fcmToken = await _fcm.getToken();
+
+    // Save the userID(if not previously saved) and their device token to Firestore
+    if (fcmToken != null) {
+      var tokens = _db
+          .collection('users')
+          .document(uid)
+          .collection('tokens')
+          .document(fcmToken);
+      print(fcmToken);
+
+      await tokens.setData({
+        'token': fcmToken,
+      });
+    }
+  }
+
+
 
   Widget posts(){
     return Container(
@@ -114,7 +182,7 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (BuildContext context,int index){
                   DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
-                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], null,null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
+                  Deets postDeets=new Deets(snapshot.data.documents[index]['title'], null,null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
                   return dropdownValue=="None"?getCard(postDeets,postedAt):(dropdownValue==postDeets.group)?getCard(postDeets,postedAt):new Container();
             });
         },
@@ -147,29 +215,29 @@ Widget events(){
                 itemBuilder: (BuildContext context,int index){
                   DateTime timestamp=(snapshot.data.documents[index]['scheduled_at']).toDate();
                   DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
-                  PostDeets postDeets=new PostDeets(snapshot.data.documents[index]['title'], timestamp, snapshot.data.documents[index]['venue'], snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
-                  return dropdownValue=="None"?getCard(postDeets,postedAt):(dropdownValue==postDeets.group)?getCard(postDeets,postedAt):new Container();
+                  Deets deets=new Deets(snapshot.data.documents[index]['title'], timestamp, snapshot.data.documents[index]['venue'], snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
+                  return dropdownValue=="None"?getCard(deets,postedAt):(dropdownValue==deets.group)?getCard(deets,postedAt):new Container();
             });
         },
       ),
     );
 }
-Widget getCard(PostDeets postDeets,DateTime postedAt){
+Widget getCard(Deets deets,DateTime postedAt){
   String createdBy="",title="", scheduleAt="", src="";
   String timePast= timeago.format(postedAt);
   print(timeago.format(postedAt));
-  createdBy=postDeets.group;title=postDeets.title;
-  if(postDeets.venue!=null){
-  scheduleAt=postDeets.venue;}
-  src=postDeets.imgURL;
+  createdBy=deets.group;title=deets.title;
+  if(deets.venue!=null){
+  scheduleAt=deets.venue;}
+  src=deets.imgURL;
     if(src==null || src=="") src="https://lh3.googleusercontent.com/ZDoNo4_cS_KW0B0fKdM3LIkEwfh8LSa6pAnsYKfehdsYlX64DmueZGOTNdXRlo7ccNE";
     return GestureDetector(
       onTap: (){
-      if(postDeets.venue==null){
-        Navigator.of(context).pushNamed(Post2.routeName,arguments: postDeets);
+      if(deets.venue==null){
+        Navigator.of(context).pushNamed(Posts.routeName,arguments: deets);
       }
       else{
-        Navigator.of(context).pushNamed(Post.routeName,arguments: postDeets);
+        Navigator.of(context).pushNamed(Events.routeName,arguments: deets);
       }
       },
       child: Container(
