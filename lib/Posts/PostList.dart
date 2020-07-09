@@ -1,13 +1,15 @@
 import 'package:campusbuddy/ContactScreens/ContactList.dart';
-import 'package:campusbuddy/post_screen/post.dart';
-import 'package:campusbuddy/post_screen/post2.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:campusbuddy/post_screen/events.dart';
+import 'package:campusbuddy/post_screen/posts.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:campusbuddy/auth/auth.dart';
+import 'package:campusbuddy/auth/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class PostList extends StatefulWidget {
   static const Color color = const Color(0xff303e84);
@@ -17,6 +19,7 @@ class PostList extends StatefulWidget {
   _PostListState createState() => _PostListState();
 }
 
+
 class _PostListState extends State<PostList>
     with SingleTickerProviderStateMixin {
   int totPost = 0, totEvent = 0;
@@ -25,6 +28,11 @@ class _PostListState extends State<PostList>
   TabController _tabController;
   List<String> items;
   String filter;
+  final Firestore _db = Firestore.instance;
+  final FirebaseMessaging _fcm = FirebaseMessaging();
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, allowFontScaling: true, width: 410, height: 703);
@@ -98,6 +106,7 @@ class _PostListState extends State<PostList>
   void initState() {
     super.initState();
     _tabController = getTabController();
+
     totPostEventCount(totPost, 0).then((value) {
       setState(() {
       });
@@ -135,6 +144,7 @@ class _PostListState extends State<PostList>
       },
     );
   }
+
     _saveDeviceToken() async {
     // Get the current userID
 
@@ -160,6 +170,7 @@ class _PostListState extends State<PostList>
     }
   }
 
+
   Widget posts() {
     return Container(
       child: StreamBuilder<QuerySnapshot>(
@@ -184,6 +195,7 @@ class _PostListState extends State<PostList>
             totPostEventCount(totPost, 1);
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
+
                 itemBuilder: (BuildContext context, int index) {
                   if (totPost != PostList.totReadPost) {
                     postSelect = true;
