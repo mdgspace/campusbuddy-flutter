@@ -10,16 +10,21 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:campusbuddy/auth/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+
 class PostList extends StatefulWidget {
   static const Color color = const Color(0xff303e84);
- static final svgArrowIcon=ContactList.svgArrowIcon;
+  static final svgArrowIcon = ContactList.svgArrowIcon;
+  static int totReadPost = 0, totReadEvent = 0;
   @override
   _PostListState createState() => _PostListState();
 }
 
-class _PostListState extends State<PostList>  with SingleTickerProviderStateMixin{
 
-  String dropdownValue="None";
+class _PostListState extends State<PostList>
+    with SingleTickerProviderStateMixin {
+  int totPost = 0, totEvent = 0;
+  bool postSelect = false, eventSelect = false;
+  String dropdownValue = "None";
   TabController _tabController;
   List<String> items;
   String filter;
@@ -32,57 +37,61 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
   Widget build(BuildContext context) {
     ScreenUtil.init(context, allowFontScaling: true, width: 410, height: 703);
     return Scaffold(
-      appBar:  AppBar(
+      appBar: AppBar(
         backgroundColor: PostList.color,
         elevation: 0,
-        title:Text('Campus Updates'),
-      bottom: new TabBar(
-       indicatorColor: Colors.white,
-          controller: _tabController,
-          tabs: <Tab>[
-        new Tab(icon: Text('Posts',
-          style: TextStyle(
-              fontSize: 20.sp
-          ),),),
-        new Tab(icon: Text('Events',
-        style: TextStyle(
-          fontSize: 20.sp
-        ),
-        ),),
-      ]),
+        title: Text('Campus Updates'),
+        bottom: new TabBar(
+            indicatorColor: Colors.white,
+            controller: _tabController,
+            tabs: <Tab>[
+              new Tab(
+                icon: Text(
+                  'Posts',
+                  style: TextStyle(fontSize: 20.sp),
+                ),
+              ),
+              new Tab(
+                icon: Text(
+                  'Events',
+                  style: TextStyle(fontSize: 20.sp),
+                ),
+              ),
+            ]),
       ),
       body: Column(
         children: <Widget>[
-        DropdownButton<String>(
-          value: dropdownValue,
+          DropdownButton<String>(
+            value: dropdownValue,
             icon: Icon(Icons.filter_list),
-          iconSize: 24,
-          elevation: 16,
-          style: TextStyle(color: Colors.deepPurple),
+            iconSize: 24,
+            elevation: 16,
+            style: TextStyle(color: Colors.deepPurple),
             underline: Container(
               height: 2,
               color: Colors.deepPurpleAccent,
-        ),
-          onChanged: (String newValue) {
-            setState(() {
-              dropdownValue = newValue;
-          });
-        },
-          items: <String>['None','Mobile development group', 'Information Management Group', 'Vision and Language Group']
-              .map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-          );
-        }).toList(),
-      ),
+            ),
+            onChanged: (String newValue) {
+              setState(() {
+                dropdownValue = newValue;
+              });
+            },
+            items: <String>[
+              'None',
+              'Mobile development group',
+              'Information Management Group',
+              'Vision and Language Group'
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
           Flexible(
             child: new TabBarView(
                 controller: _tabController,
-                children: <Widget>[
-                  posts(),
-                  events()
-            ]),
+                children: <Widget>[posts(), events()]),
           ),
         ],
       ),
@@ -90,7 +99,7 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
   }
 
   TabController getTabController() {
-    return TabController(length: 2,vsync:this);
+    return TabController(length: 2, vsync: this);
   }
 
   @override
@@ -98,7 +107,11 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
     super.initState();
     _tabController = getTabController();
 
-    _saveDeviceToken();
+    totPostEventCount(totPost, 0).then((value) {
+      setState(() {
+      });
+    });
+        _saveDeviceToken();
     _fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
@@ -131,7 +144,8 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
       },
     );
   }
-  _saveDeviceToken() async {
+
+    _saveDeviceToken() async {
     // Get the current userID
 
     final FirebaseUser user = await auth.currentUser();
@@ -157,47 +171,14 @@ class _PostListState extends State<PostList>  with SingleTickerProviderStateMixi
   }
 
 
-
-  Widget posts(){
+  Widget posts() {
     return Container(
       child: StreamBuilder<QuerySnapshot>(
         stream: Firestore.instance
-            .collection('Posts').orderBy('created_at',descending: true)
+            .collection('Posts')
+            .orderBy('created_at', descending: true)
             .snapshots(),
-        builder:
-            (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) return Text('');
-          if (snapshot.data == null ||
-              snapshot.data.documents == null ||
-              snapshot.data.documents.length == 0)
-            return Center(
-                heightFactor: 10,
-                widthFactor: 10,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
-              ),
-              );
-          else
-            return ListView.builder(
-                itemCount: snapshot.data.documents.length,
-                itemBuilder: (BuildContext context,int index){
-                  DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
-                  Deets postDeets=new Deets(snapshot.data.documents[index]['title'], null,null, snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
-                  return dropdownValue=="None"?getCard(postDeets,postedAt):(dropdownValue==postDeets.group)?getCard(postDeets,postedAt):new Container();
-            });
-        },
-      ),
-    );
-}
-
-Widget events(){
-    return Container(
-      child: StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance
-            .collection('Events').orderBy('created_at',descending: true)
-            .snapshots(),
-        builder:
-            (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) return Text('');
           if (snapshot.data == null ||
               snapshot.data.documents == null ||
@@ -209,125 +190,225 @@ Widget events(){
                 valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
               ),
             );
-          else
+          else {
+            totPost = snapshot.data.documents.length;
+            totPostEventCount(totPost, 1);
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
-                itemBuilder: (BuildContext context,int index){
-                  DateTime timestamp=(snapshot.data.documents[index]['scheduled_at']).toDate();
-                  DateTime postedAt=(snapshot.data.documents[index]['created_at']).toDate();
-                  Deets deets=new Deets(snapshot.data.documents[index]['title'], timestamp, snapshot.data.documents[index]['venue'], snapshot.data.documents[index]['description'], snapshot.data.documents[index]['image'], snapshot.data.documents[index]['created_by']);
-                  return dropdownValue=="None"?getCard(deets,postedAt):(dropdownValue==deets.group)?getCard(deets,postedAt):new Container();
-            });
+
+                itemBuilder: (BuildContext context, int index) {
+                  if (totPost != PostList.totReadPost) {
+                    postSelect = true;
+                    PostList.totReadPost++;
+                  } else {
+                    postSelect = false;
+                  }
+                  DateTime postedAt =
+                      (snapshot.data.documents[index]['created_at']).toDate();
+                  PostDeets postDeets = new PostDeets(
+                      snapshot.data.documents[index]['title'],
+                      null,
+                      null,
+                      snapshot.data.documents[index]['description'],
+                      snapshot.data.documents[index]['image'],
+                      snapshot.data.documents[index]['created_by']);
+                  return dropdownValue == "None"
+                      ? getCard(postDeets, postedAt, postSelect)
+                      : (dropdownValue == postDeets.group)
+                          ? getCard(postDeets, postedAt, postSelect)
+                          : new Container();
+                });
+          }
         },
       ),
     );
-}
-Widget getCard(Deets deets,DateTime postedAt){
-  String createdBy="",title="", scheduleAt="", src="";
-  String timePast= timeago.format(postedAt);
-  print(timeago.format(postedAt));
-  createdBy=deets.group;title=deets.title;
-  if(deets.venue!=null){
-  scheduleAt=deets.venue;}
-  src=deets.imgURL;
-    if(src==null || src=="") src="https://lh3.googleusercontent.com/ZDoNo4_cS_KW0B0fKdM3LIkEwfh8LSa6pAnsYKfehdsYlX64DmueZGOTNdXRlo7ccNE";
+  }
+
+  Widget events() {
+    return Container(
+      child: StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance
+            .collection('Events')
+            .orderBy('created_at', descending: true)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) return Text('');
+          if (snapshot.data == null ||
+              snapshot.data.documents == null ||
+              snapshot.data.documents.length == 0)
+            return Center(
+              heightFactor: 10,
+              widthFactor: 10,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.indigo[600]),
+              ),
+            );
+          else {
+            totEvent = snapshot.data.documents.length;
+            totPostEventCount(totEvent, 2);
+            return ListView.builder(
+                itemCount: snapshot.data.documents.length,
+                itemBuilder: (BuildContext context, int index) {
+                  DateTime timestamp =
+                      (snapshot.data.documents[index]['scheduled_at']).toDate();
+                  DateTime postedAt =
+                      (snapshot.data.documents[index]['created_at']).toDate();
+                  PostDeets postDeets = new PostDeets(
+                      snapshot.data.documents[index]['title'],
+                      timestamp,
+                      snapshot.data.documents[index]['venue'],
+                      snapshot.data.documents[index]['description'],
+                      snapshot.data.documents[index]['image'],
+                      snapshot.data.documents[index]['created_by']);
+                  if (totEvent != PostList.totReadEvent) {
+                    eventSelect = true;
+                    PostList.totReadEvent++;
+                  } else {
+                    eventSelect = false;
+                  }
+                  return dropdownValue == "None"
+                      ? getCard(postDeets, postedAt, eventSelect)
+                      : (dropdownValue == postDeets.group)
+                          ? getCard(postDeets, postedAt, eventSelect)
+                          : new Container();
+                });
+          }
+        },
+      ),
+    );
+  }
+
+  Widget getCard(PostDeets postDeets, DateTime postedAt, bool selected) {
+    String createdBy = "", title = "", scheduleAt = "", src = "";
+    String timePast = timeago.format(postedAt);
+    createdBy = postDeets.group;
+    title = postDeets.title;
+    if (postDeets.venue != null) {
+      scheduleAt = postDeets.venue;
+    }
+    src = postDeets.imgURL;
+    if (src == null || src == "")
+      src =
+          "https://lh3.googleusercontent.com/ZDoNo4_cS_KW0B0fKdM3LIkEwfh8LSa6pAnsYKfehdsYlX64DmueZGOTNdXRlo7ccNE";
     return GestureDetector(
-      onTap: (){
-      if(deets.venue==null){
-        Navigator.of(context).pushNamed(Posts.routeName,arguments: deets);
-      }
-      else{
-        Navigator.of(context).pushNamed(Events.routeName,arguments: deets);
-      }
+      onTap: () {
+        if (postDeets.venue == null) {
+          Navigator.of(context)
+              .pushNamed(Post2.routeName, arguments: postDeets);
+        } else {
+          Navigator.of(context).pushNamed(Post.routeName, arguments: postDeets);
+        }
       },
       child: Container(
         child: Card(
           elevation: 3,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(11, 18, 17, 16),
+          shape: selected
+              ? new RoundedRectangleBorder(
+                  side: new BorderSide(color: Colors.blue, width: 2.0),
+                  borderRadius: BorderRadius.circular(4.0))
+              : new RoundedRectangleBorder(
+                  side: new BorderSide(color: Colors.white, width: 2.0),
+                  borderRadius: BorderRadius.circular(4.0)),
+          child: Container(
+            padding: EdgeInsets.fromLTRB(11, 18, 17, 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Flexible(
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
+                      Container(
+                        height: 42.h,
+                        width: 42.w,
+                        padding: EdgeInsets.all(11.sp),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: new DecorationImage(
+                            image: NetworkImage(
+                              src,
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 17.0.w,
+                      ),
                       Flexible(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                                height: 42.h,
-                                width: 42.w,
-                              padding: EdgeInsets.all(11.sp),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image:new DecorationImage(image: NetworkImage(src,),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '$createdBy',
+                              style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: ScreenUtil().setSp(12),
+                                  color: Color(0xFF3B3B3B)),
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.left,
                             ),
                             SizedBox(
-                              width: 17.0.w,
+                              height: 5.25.h,
                             ),
-                            Flexible(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      '$createdBy',
-                                      style: TextStyle(
-                                          fontFamily:'Roboto',
-                                          fontSize: ScreenUtil().setSp(12),
-                                        color: Color(0xFF3B3B3B)
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.left,
-                                  ),
-                                  SizedBox(
-                                    height: 5.25.h,
-                                  ),
-                                  Text(
-                                      '$title',
-                                    style: TextStyle(
-                                        fontFamily:'Roboto',
-                                        fontSize: ScreenUtil().setSp(17.52),
-                                      color: Colors.black87
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.left,
-                                  ),
-
-                                ],
-
-                              ),
+                            Text(
+                              '$title',
+                              style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: ScreenUtil().setSp(17.52),
+                                  color: Colors.black87),
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.left,
                             ),
                           ],
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          ContactList.svgArrowIcon,
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(25, 12, 0, 0),
-                            child: Text('$timePast' ,
-                              style: TextStyle(
-                                fontFamily:'Roboto',
-                                fontSize: ScreenUtil().setSp(12),
-                                color: Color(0xFF3B3B3B),
-                            ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          )
-                        ],
-                      )
                     ],
                   ),
                 ),
-
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    ContactList.svgArrowIcon,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(25, 12, 0, 0),
+                      child: Text(
+                        '$timePast',
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: ScreenUtil().setSp(12),
+                          color: Color(0xFF3B3B3B),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
         ),
         padding: EdgeInsets.fromLTRB(14, 8, 14, 0),
       ),
     );
-}
-}
+  }
 
+  Future totPostEventCount(int x, int update) async {
+    Auth auth = new Auth();
+    final FirebaseUser user = await auth.getCurrentUser();
+    final uid = user.uid;
+    // here you write the codes to input the data into firestore
+    var document = await Firestore.instance.collection('users').document(uid);
+    document.get().then((value) {
+      PostList.totReadEvent = value.data["readEvent"];
+      PostList.totReadPost = value.data["readPost"];
+    });
+    if (update == 1) {
+      document.updateData({"readPost": x});
+    } else if (update == 2) {
+      document.updateData({"readEvent": x});
+    }
+  }
+}
