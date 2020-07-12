@@ -9,7 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:campusbuddy/auth/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:campusbuddy/auth/auth.dart';
 
 class PostList extends StatefulWidget {
   static const Color color = const Color(0xff303e84);
@@ -22,6 +22,7 @@ class PostList extends StatefulWidget {
 
 class _PostListState extends State<PostList>
     with SingleTickerProviderStateMixin {
+  Counting _counting = new Counting();
   int totPost = 0, totEvent = 0;
   bool postSelect = false, eventSelect = false;
   String dropdownValue = "None";
@@ -68,8 +69,8 @@ class _PostListState extends State<PostList>
             elevation: 16,
             style: TextStyle(color: Colors.deepPurple),
             underline: Container(
-              height: 2,
-              color: Colors.deepPurpleAccent,
+              height: 1,
+              color: Colors.black,
             ),
             onChanged: (String newValue) {
               setState(() {
@@ -80,11 +81,17 @@ class _PostListState extends State<PostList>
               'None',
               'Mobile development group',
               'Information Management Group',
-              'Vision and Language Group'
+              'Vision and Language Group',
+
             ].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(value),
+                child: Text(value,
+                overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
               );
             }).toList(),
           ),
@@ -106,8 +113,8 @@ class _PostListState extends State<PostList>
   void initState() {
     super.initState();
     _tabController = getTabController();
-
-    totPostEventCount(totPost, 0).then((value) {
+    _counting.beReady().then((value)
+    {
       setState(() {
       });
     });
@@ -192,20 +199,19 @@ class _PostListState extends State<PostList>
             );
           else {
             totPost = snapshot.data.documents.length;
-            totPostEventCount(totPost, 1);
+            var bet=PostList.totReadPost;
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
-
                 itemBuilder: (BuildContext context, int index) {
-                  if (totPost != PostList.totReadPost) {
+                  if (totPost > bet && bet!=0){
                     postSelect = true;
-                    PostList.totReadPost++;
+                    bet++;
                   } else {
                     postSelect = false;
                   }
                   DateTime postedAt =
                       (snapshot.data.documents[index]['created_at']).toDate();
-                  PostDeets postDeets = new PostDeets(
+                  Deets postDeets = new Deets(
                       snapshot.data.documents[index]['title'],
                       null,
                       null,
@@ -213,9 +219,9 @@ class _PostListState extends State<PostList>
                       snapshot.data.documents[index]['image'],
                       snapshot.data.documents[index]['created_by']);
                   return dropdownValue == "None"
-                      ? getCard(postDeets, postedAt, postSelect)
+                      ? getCard(postDeets, postedAt, postSelect,index)
                       : (dropdownValue == postDeets.group)
-                          ? getCard(postDeets, postedAt, postSelect)
+                          ? getCard(postDeets, postedAt, postSelect,index)
                           : new Container();
                 });
           }
@@ -245,7 +251,7 @@ class _PostListState extends State<PostList>
             );
           else {
             totEvent = snapshot.data.documents.length;
-            totPostEventCount(totEvent, 2);
+            var bets=PostList.totReadEvent;
             return ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -253,23 +259,24 @@ class _PostListState extends State<PostList>
                       (snapshot.data.documents[index]['scheduled_at']).toDate();
                   DateTime postedAt =
                       (snapshot.data.documents[index]['created_at']).toDate();
-                  PostDeets postDeets = new PostDeets(
+                  Deets postDeets = new Deets(
                       snapshot.data.documents[index]['title'],
                       timestamp,
                       snapshot.data.documents[index]['venue'],
                       snapshot.data.documents[index]['description'],
                       snapshot.data.documents[index]['image'],
                       snapshot.data.documents[index]['created_by']);
-                  if (totEvent != PostList.totReadEvent) {
+
+                  if (totEvent > bets && bets!=0) {
                     eventSelect = true;
-                    PostList.totReadEvent++;
+                    bets++;
                   } else {
                     eventSelect = false;
                   }
                   return dropdownValue == "None"
-                      ? getCard(postDeets, postedAt, eventSelect)
+                      ? getCard(postDeets, postedAt, eventSelect,index)
                       : (dropdownValue == postDeets.group)
-                          ? getCard(postDeets, postedAt, eventSelect)
+                          ? getCard(postDeets, postedAt, eventSelect,index)
                           : new Container();
                 });
           }
@@ -278,7 +285,7 @@ class _PostListState extends State<PostList>
     );
   }
 
-  Widget getCard(PostDeets postDeets, DateTime postedAt, bool selected) {
+  Widget getCard(Deets postDeets, DateTime postedAt, bool selected,int index) {
     String createdBy = "", title = "", scheduleAt = "", src = "";
     String timePast = timeago.format(postedAt);
     createdBy = postDeets.group;
@@ -293,20 +300,27 @@ class _PostListState extends State<PostList>
     return GestureDetector(
       onTap: () {
         if (postDeets.venue == null) {
+          print((totPost-index));
+          print((totPost-PostList.totReadPost));
+          if((index)<(totPost-PostList.totReadPost)){
+          _counting.totPostEventCount((totPost-index), 1);
+          }
           Navigator.of(context)
-              .pushNamed(Post2.routeName, arguments: postDeets);
+              .pushNamed(Posts.routeName, arguments: postDeets);
         } else {
-          Navigator.of(context).pushNamed(Post.routeName, arguments: postDeets);
+          print((totEvent-index));
+          print((totEvent-PostList.totReadEvent));
+          if((index)<(totEvent-PostList.totReadEvent)){
+          _counting.totPostEventCount((totEvent-index), 2);
+          }
+          Navigator.of(context).pushNamed(Events.routeName, arguments: postDeets);
         }
       },
       child: Container(
         child: Card(
+          color: selected?Color(0xFFf0f3f4):Colors.white,
           elevation: 3,
-          shape: selected
-              ? new RoundedRectangleBorder(
-                  side: new BorderSide(color: Colors.blue, width: 2.0),
-                  borderRadius: BorderRadius.circular(4.0))
-              : new RoundedRectangleBorder(
+          shape: new RoundedRectangleBorder(
                   side: new BorderSide(color: Colors.white, width: 2.0),
                   borderRadius: BorderRadius.circular(4.0)),
           child: Container(
@@ -383,7 +397,11 @@ class _PostListState extends State<PostList>
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                    )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                      child: selected?Icon(Icons.markunread,color: Colors.blue,):Icon(Icons.done,color:Colors.blue),
+                    ),
                   ],
                 )
               ],
@@ -394,21 +412,28 @@ class _PostListState extends State<PostList>
       ),
     );
   }
-
-  Future totPostEventCount(int x, int update) async {
-    Auth auth = new Auth();
-    final FirebaseUser user = await auth.getCurrentUser();
-    final uid = user.uid;
-    // here you write the codes to input the data into firestore
-    var document = await Firestore.instance.collection('users').document(uid);
-    document.get().then((value) {
+}
+class Counting{
+  Auth auth = new Auth();
+  var document;
+  FirebaseUser user;
+  var uid;
+  Future beReady() async{
+    FirebaseUser user = await auth.getCurrentUser();
+    uid = user.uid;
+    document = await Firestore.instance.collection('users').document(uid);
+    await document.get().then((value) {
       PostList.totReadEvent = value.data["readEvent"];
       PostList.totReadPost = value.data["readPost"];
+
     });
+  }
+  Future totPostEventCount(int x, int update) async {
     if (update == 1) {
-      document.updateData({"readPost": x});
-    } else if (update == 2) {
-      document.updateData({"readEvent": x});
-    }
+    document.updateData({"readPost": x});
+  } else if (update == 2) {
+    document.updateData({"readEvent": x});
+  }
+    beReady();
   }
 }
