@@ -205,7 +205,7 @@ class _PostListState extends State<PostList>
                   }
                   DateTime postedAt =
                       (snapshot.data.documents[index]['created_at']).toDate();
-                  PostDeets postDeets = new PostDeets(
+                  Deets postDeets = new Deets(
                       snapshot.data.documents[index]['title'],
                       null,
                       null,
@@ -253,7 +253,7 @@ class _PostListState extends State<PostList>
                       (snapshot.data.documents[index]['scheduled_at']).toDate();
                   DateTime postedAt =
                       (snapshot.data.documents[index]['created_at']).toDate();
-                  PostDeets postDeets = new PostDeets(
+                  Deets postDeets = new Deets(
                       snapshot.data.documents[index]['title'],
                       timestamp,
                       snapshot.data.documents[index]['venue'],
@@ -278,7 +278,7 @@ class _PostListState extends State<PostList>
     );
   }
 
-  Widget getCard(PostDeets postDeets, DateTime postedAt, bool selected) {
+  Widget getCard(Deets postDeets, DateTime postedAt, bool selected) {
     String createdBy = "", title = "", scheduleAt = "", src = "";
     String timePast = timeago.format(postedAt);
     createdBy = postDeets.group;
@@ -294,9 +294,9 @@ class _PostListState extends State<PostList>
       onTap: () {
         if (postDeets.venue == null) {
           Navigator.of(context)
-              .pushNamed(Post2.routeName, arguments: postDeets);
+              .pushNamed(Posts.routeName, arguments: postDeets);
         } else {
-          Navigator.of(context).pushNamed(Post.routeName, arguments: postDeets);
+          Navigator.of(context).pushNamed(Events.routeName, arguments: postDeets);
         }
       },
       child: Container(
