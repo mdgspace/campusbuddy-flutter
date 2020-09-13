@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:campusbuddy/auth/user.dart';
+import 'package:campusbuddy/auth/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:campusbuddy/auth/auth.dart';
 
@@ -142,11 +142,9 @@ class _PostListState extends State<PostList>
         );
       },
       onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
         // TODO optional
       },
       onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
         // TODO optional
       },
     );
@@ -157,7 +155,6 @@ class _PostListState extends State<PostList>
 
     final FirebaseUser user = await auth.currentUser();
     final uid = user.uid;
-    print(uid);
 
     // Then get the token for this device
     String fcmToken = await _fcm.getToken();
@@ -169,7 +166,6 @@ class _PostListState extends State<PostList>
           .document(uid)
           .collection('tokens')
           .document(fcmToken);
-      print(fcmToken);
 
       await tokens.setData({
         'token': fcmToken,
@@ -286,6 +282,7 @@ class _PostListState extends State<PostList>
   }
 
   Widget getCard(Deets postDeets, DateTime postedAt, bool selected,int index) {
+
     String createdBy = "", title = "", scheduleAt = "", src = "";
     String timePast = timeago.format(postedAt);
     createdBy = postDeets.group;
@@ -300,19 +297,16 @@ class _PostListState extends State<PostList>
     return GestureDetector(
       onTap: () {
         if (postDeets.venue == null) {
-          print((totPost-index));
-          print((totPost-PostList.totReadPost));
           if((index)<(totPost-PostList.totReadPost)){
           _counting.totPostEventCount((totPost-index), 1);
           }
           Navigator.of(context)
               .pushNamed(Posts.routeName, arguments: postDeets);
         } else {
-          print((totEvent-index));
-          print((totEvent-PostList.totReadEvent));
           if((index)<(totEvent-PostList.totReadEvent)){
           _counting.totPostEventCount((totEvent-index), 2);
           }
+
           Navigator.of(context).pushNamed(Events.routeName, arguments: postDeets);
         }
       },

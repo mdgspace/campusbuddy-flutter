@@ -26,7 +26,7 @@ const tokens = querySnapshot.docs.map(snap => snap.id);
 const payload: admin.messaging.MessagingPayload = {
       notification: {
         title: `${Event.created_by} has added a new event!`,
-        body: `A ${Event.title} has been scheduled, click for more details!`,
+        body: `A ${Event.title} has been scheduled, visit app for more details!`,
         click_action: 'FLUTTER_NOTIFICATION_CLICK'
       }
     };
