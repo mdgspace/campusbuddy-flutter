@@ -4,11 +4,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'post_screen/post.dart';
+import 'post_screen/events.dart';
 
 
 class ScheduleNotification extends StatefulWidget {
-  final PostDeets notifs;
+  final Deets notifs;
   ScheduleNotification(this.notifs);
   @override
   _ScheduleNotificationState createState() => new _ScheduleNotificationState(notifs);
@@ -18,7 +18,7 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
 
   final GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  final PostDeets notifs;
+  final Deets notifs;
   _ScheduleNotificationState(this.notifs);
   static const Color indigo = const Color(0xff303E84);
 
@@ -33,31 +33,22 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
         initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings,);
-
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return
-            Container(
+    return Container(
               height: 60,
               child: RaisedButton(
                 color: Colors.indigo[700],
                 elevation: 3,
                 highlightElevation: 6,
-                onPressed: () async
-                {
-                  Alertdialog();
-                  },
+                onPressed: () async => Alertdialog(),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      'Notify me ',style: TextStyle( color: Colors.white, fontSize: 18),
-                    ),
+                    Text('Notify me ',style: TextStyle( color: Colors.white, fontSize: 18),),
                     IconButton(icon: SvgPicture.asset('assets/bell.svg')),
-
                   ],
                 ),
                 ),
@@ -66,9 +57,9 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
 
 
 //method to schedule notifications, give it date and time arguments retrieved from db
-
-  Future<void> _scheduleNotification15() async {
-    var scheduledNotificationDateTime = (notifs.time).subtract(Duration(minutes: 15));
+// and an int value for fixing alert-before time interval.
+  Future<void> _scheduleNotification(int alert) async {
+    var scheduledNotificationDateTime = (notifs.time).subtract(Duration(minutes: alert));
     var androidPlatformChannelSpecifics =
     AndroidNotificationDetails('campusbuddy',
         'campusbuddy', 'campusbuddy');
@@ -83,85 +74,33 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
         platformChannelSpecifics);
   }
 
-  Future<void> _scheduleNotification30() async {
-    var scheduledNotificationDateTime = (notifs.time).subtract(Duration(minutes: 30));
-    var androidPlatformChannelSpecifics =
-    AndroidNotificationDetails('campusbuddy',
-        'campusbuddy', 'campusbuddy');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    NotificationDetails platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.schedule(
-        0,
-        "Event: ${notifs.title}",
-        'Venue: ${notifs.venue}, Conducted by: ${notifs.group}',
-        scheduledNotificationDateTime,
-        platformChannelSpecifics);
-  }
-
-  Future<void> _scheduleNotification1H() async {
-    var scheduledNotificationDateTime = (notifs.time).subtract(Duration(minutes: 60));
-    var androidPlatformChannelSpecifics =
-    AndroidNotificationDetails('campusbuddy',
-        'campusbuddy', 'campusbuddy');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    NotificationDetails platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.schedule(
-        0,
-        "Event: ${notifs.title}",
-        'Venue: ${notifs.venue}, Conducted by: ${notifs.group}',
-        scheduledNotificationDateTime,
-        platformChannelSpecifics);
-  }
-
+  //PopUP Widget that allows user to choose when to be alerted before Event
   void Alertdialog(){
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // return object of type Dialog
+        // returns object of type Dialog
         return AlertDialog(
           title: Center(child: Text("Notify me:",style: TextStyle(color: indigo,fontSize: 30),)),
           shape: RoundedRectangleBorder(),
           actions: <Widget>[
             FlatButton(child: Center(child: Text("15 minutes before Event",style: TextStyle(color: Colors.blue[700],fontSize: 20),)),
               onPressed: (){
-                _scheduleNotification15();
-                Fluttertoast.showToast(
-                    msg: "SUCCESSFUL",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    backgroundColor: indigo,
-                    textColor: Colors.white
-                );
-                Navigator.pop(context);
-              },
+                _scheduleNotification(15);
+                FlutterToast();
+                },
             ),
             FlatButton(child: Center(child: Text("30 minutes before Event",style: TextStyle(color: Colors.blue[700],fontSize: 20),)),
               onPressed: (){
-                _scheduleNotification30();
-                Fluttertoast.showToast(
-                    msg: "SUCCESSFUL",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    backgroundColor: indigo,
-                    textColor: Colors.white
-                );
-                Navigator.pop(context);
-              },
+                _scheduleNotification(30);
+                FlutterToast();
+                },
             ),
             FlatButton(child: Center(child: Text("1 Hour before Event",style: TextStyle(color: Colors.blue[700],fontSize: 20),)),
               onPressed: (){
-                _scheduleNotification1H();
-                Fluttertoast.showToast(
-                    msg: "SUCCESSFUL",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    backgroundColor: indigo,
-                    textColor: Colors.white
-                );
-                Navigator.pop(context);
-              },
+                _scheduleNotification(60);
+                FlutterToast();
+                },
             )
           ],
         );
@@ -169,5 +108,16 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
     );
   }
 
+//Toast to confirm successfully added notification.
+void FlutterToast(){
+  Fluttertoast.showToast(
+      msg: "SUCCESSFUL",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: indigo,
+      textColor: Colors.white
+  );
+  Navigator.pop(context);
+}
 
 }
