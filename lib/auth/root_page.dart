@@ -1,5 +1,6 @@
 import 'package:campusbuddy/directory/directory.dart';
 import 'package:campusbuddy/directory/directory_list_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'auth.dart';
@@ -30,22 +31,20 @@ class _RootPageState extends State<RootPage>
   @override
   void initState() {
     super.initState();
-    widget.auth.getCurrentUser().then((user) {
-      setState(() {
-        if (user != null) {
-          _userId = user?.uid;
-        }
-        authStatus =
-        user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
-      });
+    User user = widget.auth.getCurrentUser();
+    setState(() {
+      if (user != null) {
+        _userId = user?.uid;
+      }
+      authStatus =
+      user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
     });
   }
 
   void loginCallback() {
-    widget.auth.getCurrentUser().then((user) {
-      setState(() {
-        _userId = user.uid.toString();
-      });
+    User user = widget.auth.getCurrentUser();
+    setState(() {
+      _userId = user.uid.toString();
     });
     setState(() {
       authStatus = AuthStatus.LOGGED_IN;

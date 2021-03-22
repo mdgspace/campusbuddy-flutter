@@ -8,21 +8,21 @@ class Auth{
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<String> signIn(String email, String password) async {
-    AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(
+    UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
-    FirebaseUser user = result.user;
+    User user = result.user;
     return user.uid;
   }
 
   Future<String> signUp(String email, String password) async {
-    AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
+    UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
-    FirebaseUser user = result.user;
+    User user = result.user;
     return user.uid;
   }
 
-  Future<FirebaseUser> getCurrentUser() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+  User getCurrentUser() {
+    User user = _firebaseAuth.currentUser;
     return user;
   }
 
@@ -35,11 +35,11 @@ class Auth{
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
-  Future createUser(User user) async {
+  Future createUser(MyUser user) async {
     try {
        CollectionReference _usersCollectionReference =
-      Firestore.instance.collection("users");
-      await _usersCollectionReference.document(user.id).setData(user.toJson());
+       FirebaseFirestore.instance.collection("users");
+      await _usersCollectionReference.doc(user.id).set(user.toJson());
     } catch (e) {
       return e.message;
     }

@@ -56,7 +56,6 @@ class _LoginState extends State<Login> {
           _isLoading = false;
         });
 
-
         if (userId != null && userId.length > 0) {
           widget.loginCallback();
           Navigator.of(context).pushNamedAndRemoveUntil(
@@ -68,7 +67,7 @@ class _LoginState extends State<Login> {
             msg: INCORRECT_USER_PASSWORD,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            timeInSecForIos: 2,
+            timeInSecForIosWeb: 2,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: ScreenUtil().setSp(12, allowFontScalingSelf: true));
@@ -87,24 +86,27 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 410, height: 703, allowFontScaling: true);
-    return MaterialApp(
-      home: Scaffold(
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          color: Color(0xFF303E84),
-          child: Stack(
-            children: <Widget>[
-              _showForm(),
-              showCircularProgress(),
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: showMDG(),
-                ),
-              )
-            ],
+    return ScreenUtilInit(
+      designSize: Size(410, 703),
+      allowFontScaling: true,
+      builder: () => MaterialApp(
+        home: Scaffold(
+          body: Container(
+            height: double.infinity,
+            width: double.infinity,
+            color: Color(0xFF303E84),
+            child: Stack(
+              children: <Widget>[
+                _showForm(),
+                showCircularProgress(),
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: showMDG(),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -476,7 +478,7 @@ class _LoginState extends State<Login> {
                                     msg: NO_USER_ERROR,
                                     toastLength: Toast.LENGTH_SHORT,
                                     gravity: ToastGravity.BOTTOM,
-                                    timeInSecForIos: 2,
+                                    timeInSecForIosWeb: 2,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
                                     fontSize: ScreenUtil()

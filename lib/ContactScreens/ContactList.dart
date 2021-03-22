@@ -57,7 +57,7 @@ class ContactList extends StatelessWidget {
 
   Widget futureBuilder() {
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection(
             '${ContactList.pathId2}/contacts')
             .snapshots(),
@@ -112,7 +112,7 @@ class ContactList extends StatelessWidget {
                         // displays the index of the current item.
                             (context, index) {
                           DocumentSnapshot documents =
-                          snapshot.data.documents[index];
+                          snapshot.data.docs[index];
                           return Padding(
                               padding: EdgeInsets.fromLTRB(13.5, 8, 13.5, 0),
                               child: GestureDetector(
@@ -175,7 +175,7 @@ class ContactList extends StatelessWidget {
                                 ),
                               ));
                         },
-                        childCount: snapshot.data.documents.length,
+                        childCount: snapshot.data.docs.length,
                       ),
                     ),
                     SliverFillRemaining(
@@ -191,9 +191,12 @@ class ContactList extends StatelessWidget {
   Widget build(BuildContext context) {
     ContactList.title=title2;
     ContactList.pathId2=pathId;
-    ScreenUtil.init(context, allowFontScaling: true, width: 410, height: 703);
-    return Scaffold(
-      body: futureBuilder(),
+    return ScreenUtilInit(
+      designSize: Size(410,703),
+      allowFontScaling: true,
+      builder: ()=>Scaffold(
+        body: futureBuilder(),
+      ),
     );
   }
 }

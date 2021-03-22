@@ -57,7 +57,7 @@ class _SignupPageState extends State<SignupPage> {
         setState(() {
           _isLoading = false;
         });
-        widget.auth.createUser(User(id:userId,email: _email));
+        widget.auth.createUser(MyUser(id:userId,email: _email));
         if (userId != null && userId.length > 0) {
          // widget.loginCallback();
          showDialogBox();
@@ -70,7 +70,7 @@ class _SignupPageState extends State<SignupPage> {
             msg:  e.message,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            timeInSecForIos: 2,
+            timeInSecForIosWeb: 2,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: ScreenUtil().setSp(12, allowFontScalingSelf: true)
@@ -89,27 +89,30 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 410, height: 703, allowFontScaling: true);
 
-    return Scaffold(
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          color: Color(0xFF303E84),
-          child: Stack(
-            children: <Widget>[
-              _showForm(),
-              showCircularProgress(),
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: showMDG(),
-                ),
-              )
-            ],
+    return ScreenUtilInit(
+      designSize: Size(410,703),
+      allowFontScaling: true,
+      builder: ()=>Scaffold(
+          body: Container(
+            height: double.infinity,
+            width: double.infinity,
+            color: Color(0xFF303E84),
+            child: Stack(
+              children: <Widget>[
+                _showForm(),
+                showCircularProgress(),
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: showMDG(),
+                  ),
+                )
+              ],
 
+            ),
           ),
-        ),
+      ),
     );
   }
 
