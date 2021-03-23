@@ -8,14 +8,13 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'dart:async';
 
 //Class that fetches and stores all details of added Events and Posts from Firestore.
-class Deets{
-  String title, venue, desc, imgURL, group; DateTime time;
-  Deets(this.title, this.time, this.venue, this.desc, this.imgURL,
-      this.group);
+class Deets {
+  String title, venue, desc, imgURL, group;
+  DateTime time;
+  Deets(this.title, this.time, this.venue, this.desc, this.imgURL, this.group);
 }
 
 class Events extends StatefulWidget {
-
   final Deets eventsDeets;
   Events(this.eventsDeets, {Key key}) : super(key: key);
   static const routeName = "/events";
@@ -25,7 +24,6 @@ class Events extends StatefulWidget {
 }
 
 class _EventsState extends State<Events> {
-
   static const Color black = const Color(0xff242424);
   static const Color indigo = const Color(0xff303E84);
   Deets deets;
@@ -43,13 +41,13 @@ class _EventsState extends State<Events> {
             expandedHeight: 210.0,
             backgroundColor: indigo,
             flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
+                centerTitle: true,
                 title: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
                   child: Text(
                     '${deets.group}',
                     style: TextStyle(
-                      fontSize:14,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       fontFamily: 'Roboto',
                       color: Colors.white,
@@ -61,14 +59,16 @@ class _EventsState extends State<Events> {
                   child: Container(
                     width: 120,
                     height: 120,
-                    decoration: new BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: new DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage('${deets.imgURL}'),)
-                    ),
+                    decoration: (deets.imgURL == null || deets.imgURL == '')
+                        ? new BoxDecoration()
+                        : new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(deets.imgURL),
+                            )),
                   ),
-                )
+                ),
             ),
           ),
           SliverToBoxAdapter(
@@ -84,35 +84,40 @@ class _EventsState extends State<Events> {
                         children: <Widget>[
                           Expanded(
                             child: Container(
-                              child: Text(
-                                  deets.title,textAlign: TextAlign.left,
-                                  style: TextStyle(color: indigo,
+                              child: Text(deets.title,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                      color: indigo,
                                       fontSize: 30,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: 'Roboto')),
-                            ),flex: 4,
+                            ),
+                            flex: 4,
                           ),
                           Expanded(
-                            child: IconButton (
-                              icon: new SvgPicture.asset('assets/facebookLogo.svg'),
+                            child: IconButton(
+                              icon: new SvgPicture.asset(
+                                  'assets/facebookLogo.svg'),
                               iconSize: 40,
                               onPressed: _launchURL,
-                            ),flex: 1,
+                            ),
+                            flex: 1,
                           ),
                         ],
                       ),
                     ),
-
-                    Padding( padding: const EdgeInsets.all(10.0),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
                       child: Linkify(
                         onOpen: _onOpen,
-                          text:"${deets.desc}",
-                          style: TextStyle(
-                            color: black,
+                        text: "${deets.desc}",
+                        style: TextStyle(
+                          color: black,
                           fontSize: 19,
                           fontWeight: FontWeight.normal,
                           fontFamily: 'Roboto',
-                          height: 1.8,),
+                          height: 1.8,
+                        ),
                       ),
                     ),
                   ],
@@ -122,17 +127,23 @@ class _EventsState extends State<Events> {
           ),
         ],
       ),
-      bottomNavigationBar:Row(
+      bottomNavigationBar: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Expanded(child: ScheduleNotification(deets)),
-          Container( width:0.4,height: 60,color: Colors.white, ),
+          Container(
+            width: 0.4,
+            height: 60,
+            color: Colors.white,
+          ),
           Expanded(child: Calendar(deets)),
-        ],) ,
+        ],
+      ),
     );
   }
 }
+
 //for Launching FB Url:
 _launchURL() async {
   const url = 'https://www.facebook.com/';
@@ -142,8 +153,9 @@ _launchURL() async {
     throw 'Could not launch $url';
   }
 }
+
 //For opening Clickable links from description text:
-Future<void>_onOpen(LinkableElement link) async {
+Future<void> _onOpen(LinkableElement link) async {
   if (await canLaunch(link.url)) {
     await launch(link.url);
   } else {

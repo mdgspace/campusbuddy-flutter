@@ -26,7 +26,7 @@ class DepartmentListPage extends StatelessWidget {
       child: ListTile(
         onTap: () => Navigator.of(context).pushNamed("/contactList", arguments: {
           'dept_name': document['dept_name'],
-          'dept_id': 'groups/$groupDocID/departments/${document.documentID}',
+          'dept_id': 'groups/$groupDocID/departments/${document.id}',
         }),
         contentPadding: EdgeInsets.all(10),
         leading: SvgPicture.asset(
@@ -43,17 +43,6 @@ class DepartmentListPage extends StatelessWidget {
             fontSize: 17,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildList(context, snapshot) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          return _buildListItem(context, snapshot.data.documents[index]);
-        },
-        childCount: snapshot.data.documents.length,
       ),
     );
   }
@@ -93,15 +82,15 @@ class DepartmentListPage extends StatelessWidget {
             expandedHeight: 250,
           ),
           StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance
+            stream: FirebaseFirestore.instance
                 .collection('groups/$groupDocID/departments')
                 .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) return SliverFillRemaining();
               if (snapshot.data == null ||
-                  snapshot.data.documents == null ||
-                  snapshot.data.documents.length == 0)
+                  snapshot.data.docs == null ||
+                  snapshot.data.docs.length == 0)
                 return SliverToBoxAdapter(
                   child: Center(
                     heightFactor: 10,
@@ -112,7 +101,14 @@ class DepartmentListPage extends StatelessWidget {
                   ),
                 );
               else
-                return _buildList(context, snapshot);
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                      return _buildListItem(context, snapshot.data.docs[index]);
+                    },
+                    childCount: snapshot.data.docs.length,
+                  ),
+                );
             },
           )
         ],

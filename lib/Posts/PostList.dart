@@ -9,7 +9,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:campusbuddy/auth/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:campusbuddy/auth/auth.dart';
 
 class PostList extends StatefulWidget {
   static const Color color = const Color(0xff303e84);
@@ -19,7 +18,6 @@ class PostList extends StatefulWidget {
   _PostListState createState() => _PostListState();
 }
 
-
 class _PostListState extends State<PostList>
     with SingleTickerProviderStateMixin {
   Counting _counting = new Counting();
@@ -27,80 +25,82 @@ class _PostListState extends State<PostList>
   bool postSelect = false, eventSelect = false;
   String dropdownValue = "None";
   TabController _tabController;
-  List<String> items;
-  String filter;
-  final Firestore _db = Firestore.instance;
-  final FirebaseMessaging _fcm = FirebaseMessaging();
+  List<String> items = [];
+  String filter = '';
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
-
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, allowFontScaling: true, width: 410, height: 703);
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: PostList.color,
-        elevation: 0,
-        title: Text('Campus Updates'),
-        bottom: new TabBar(
-            indicatorColor: Colors.white,
-            controller: _tabController,
-            tabs: <Tab>[
-              new Tab(
-                icon: Text(
-                  'Posts',
-                  style: TextStyle(fontSize: 20.sp),
-                ),
-              ),
-              new Tab(
-                icon: Text(
-                  'Events',
-                  style: TextStyle(fontSize: 20.sp),
-                ),
-              ),
-            ]),
-      ),
-      body: Column(
-        children: <Widget>[
-          DropdownButton<String>(
-            value: dropdownValue,
-            icon: Icon(Icons.filter_list),
-            iconSize: 24,
-            elevation: 16,
-            style: TextStyle(color: Colors.deepPurple),
-            underline: Container(
-              height: 1,
-              color: Colors.black,
-            ),
-            onChanged: (String newValue) {
-              setState(() {
-                dropdownValue = newValue;
-              });
-            },
-            items: <String>[
-              'None',
-              'Mobile development group',
-              'Information Management Group',
-              'Vision and Language Group',
-
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value,
-                overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.black,
+    return ScreenUtilInit(
+      designSize: Size(410, 703),
+      allowFontScaling: true,
+      builder: () => Scaffold(
+        appBar: AppBar(
+          backgroundColor: PostList.color,
+          elevation: 0,
+          title: Text('Campus Updates'),
+          bottom: new TabBar(
+              indicatorColor: Colors.white,
+              controller: _tabController,
+              tabs: <Tab>[
+                new Tab(
+                  icon: Text(
+                    'Posts',
+                    style: TextStyle(fontSize: 20.sp),
                   ),
                 ),
-              );
-            }).toList(),
-          ),
-          Flexible(
-            child: new TabBarView(
-                controller: _tabController,
-                children: <Widget>[posts(), events()]),
-          ),
-        ],
+                new Tab(
+                  icon: Text(
+                    'Events',
+                    style: TextStyle(fontSize: 20.sp),
+                  ),
+                ),
+              ]),
+        ),
+        body: Column(
+          children: <Widget>[
+            DropdownButton<String>(
+              value: dropdownValue,
+              icon: Icon(Icons.filter_list),
+              iconSize: 24,
+              elevation: 16,
+              style: TextStyle(color: Colors.deepPurple),
+              underline: Container(
+                height: 1,
+                color: Colors.black,
+              ),
+              onChanged: (String newValue) {
+                setState(() {
+                  dropdownValue = newValue ?? 'None';
+                });
+              },
+              items: <String>[
+                'None',
+                'Mobile development group',
+                'Information Management Group',
+                'Vision and Language Group',
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value ?? '',
+                  child: Text(
+                    value,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            Flexible(
+              child: new TabBarView(
+                  controller: _tabController,
+                  children: <Widget>[posts(), events()]),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -113,25 +113,24 @@ class _PostListState extends State<PostList>
   void initState() {
     super.initState();
     _tabController = getTabController();
-    _counting.beReady().then((value)
-    {
-      setState(() {
-      });
+    _counting.beReady().then((value) {
+      setState(() {});
     });
-        _saveDeviceToken();
-    _fcm.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
+    _saveDeviceToken();
 
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+
+      if (notification != null && android != null) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             content: ListTile(
-              title: Text(message['notification']['title']),
-              subtitle: Text(message['notification']['body']),
+              title: Text(message.notification.title),
+              subtitle: Text(message.notification.body),
             ),
             actions: <Widget>[
-
               FlatButton(
                 color: Colors.indigo,
                 child: Text('Ok'),
@@ -140,20 +139,18 @@ class _PostListState extends State<PostList>
             ],
           ),
         );
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        // TODO optional
-      },
-      onResume: (Map<String, dynamic> message) async {
-        // TODO optional
-      },
-    );
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      // TODO optional
+    });
   }
 
-    _saveDeviceToken() async {
+  _saveDeviceToken() async {
     // Get the current userID
 
-    final FirebaseUser user = await auth.currentUser();
+    final User user = auth.currentUser;
     final uid = user.uid;
 
     // Then get the token for this device
@@ -161,31 +158,27 @@ class _PostListState extends State<PostList>
 
     // Save the userID(if not previously saved) and their device token to Firestore
     if (fcmToken != null) {
-      var tokens = _db
-          .collection('users')
-          .document(uid)
-          .collection('tokens')
-          .document(fcmToken);
+      var tokens =
+          _db.collection('users').doc(uid).collection('tokens').doc(fcmToken);
 
-      await tokens.setData({
+      await tokens.set({
         'token': fcmToken,
       });
     }
   }
 
-
   Widget posts() {
     return Container(
       child: StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection('Posts')
             .orderBy('created_at', descending: true)
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) return Text('');
           if (snapshot.data == null ||
-              snapshot.data.documents == null ||
-              snapshot.data.documents.length == 0)
+              snapshot.data.docs == null ||
+              snapshot.data.docs.length == 0)
             return Center(
               heightFactor: 10,
               widthFactor: 10,
@@ -194,30 +187,30 @@ class _PostListState extends State<PostList>
               ),
             );
           else {
-            totPost = snapshot.data.documents.length;
-            var bet=PostList.totReadPost;
+            totPost = snapshot.data.docs.length ?? 0;
+            var bet = PostList.totReadPost ?? 0;
             return ListView.builder(
-                itemCount: snapshot.data.documents.length,
+                itemCount: snapshot.data.docs.length,
                 itemBuilder: (BuildContext context, int index) {
-                  if (totPost > bet && bet!=0){
+                  if (totPost > bet && bet != 0) {
                     postSelect = true;
                     bet++;
                   } else {
                     postSelect = false;
                   }
                   DateTime postedAt =
-                      (snapshot.data.documents[index]['created_at']).toDate();
+                      (snapshot.data.docs[index]['created_at']).toDate();
                   Deets postDeets = new Deets(
-                      snapshot.data.documents[index]['title'],
+                      snapshot.data.docs[index]['title'],
                       null,
                       null,
-                      snapshot.data.documents[index]['description'],
-                      snapshot.data.documents[index]['image'],
-                      snapshot.data.documents[index]['created_by']);
+                      snapshot.data.docs[index]['description'],
+                      snapshot.data.docs[index]['image'],
+                      snapshot.data.docs[index]['created_by']);
                   return dropdownValue == "None"
-                      ? getCard(postDeets, postedAt, postSelect,index)
+                      ? getCard(postDeets, postedAt, postSelect, index)
                       : (dropdownValue == postDeets.group)
-                          ? getCard(postDeets, postedAt, postSelect,index)
+                          ? getCard(postDeets, postedAt, postSelect, index)
                           : new Container();
                 });
           }
@@ -229,15 +222,15 @@ class _PostListState extends State<PostList>
   Widget events() {
     return Container(
       child: StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection('Events')
             .orderBy('created_at', descending: true)
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) return Text('');
           if (snapshot.data == null ||
-              snapshot.data.documents == null ||
-              snapshot.data.documents.length == 0)
+              snapshot.data.docs == null ||
+              snapshot.data.docs.length == 0)
             return Center(
               heightFactor: 10,
               widthFactor: 10,
@@ -246,33 +239,33 @@ class _PostListState extends State<PostList>
               ),
             );
           else {
-            totEvent = snapshot.data.documents.length;
-            var bets=PostList.totReadEvent;
+            totEvent = snapshot.data.docs.length ?? 0;
+            var bets = PostList.totReadEvent ?? 0;
             return ListView.builder(
-                itemCount: snapshot.data.documents.length,
+                itemCount: snapshot.data.docs.length,
                 itemBuilder: (BuildContext context, int index) {
                   DateTime timestamp =
-                      (snapshot.data.documents[index]['scheduled_at']).toDate();
+                      (snapshot.data.docs[index]['scheduled_at']).toDate();
                   DateTime postedAt =
-                      (snapshot.data.documents[index]['created_at']).toDate();
+                      (snapshot.data.docs[index]['created_at']).toDate();
                   Deets postDeets = new Deets(
-                      snapshot.data.documents[index]['title'],
+                      snapshot.data.docs[index]['title'],
                       timestamp,
-                      snapshot.data.documents[index]['venue'],
-                      snapshot.data.documents[index]['description'],
-                      snapshot.data.documents[index]['image'],
-                      snapshot.data.documents[index]['created_by']);
+                      snapshot.data.docs[index]['venue'],
+                      snapshot.data.docs[index]['description'],
+                      snapshot.data.docs[index]['image'],
+                      snapshot.data.docs[index]['created_by']);
 
-                  if (totEvent > bets && bets!=0) {
+                  if (totEvent > bets && bets != 0) {
                     eventSelect = true;
                     bets++;
                   } else {
                     eventSelect = false;
                   }
                   return dropdownValue == "None"
-                      ? getCard(postDeets, postedAt, eventSelect,index)
+                      ? getCard(postDeets, postedAt, eventSelect, index)
                       : (dropdownValue == postDeets.group)
-                          ? getCard(postDeets, postedAt, eventSelect,index)
+                          ? getCard(postDeets, postedAt, eventSelect, index)
                           : new Container();
                 });
           }
@@ -281,8 +274,7 @@ class _PostListState extends State<PostList>
     );
   }
 
-  Widget getCard(Deets postDeets, DateTime postedAt, bool selected,int index) {
-
+  Widget getCard(Deets postDeets, DateTime postedAt, bool selected, int index) {
     String createdBy = "", title = "", scheduleAt = "", src = "";
     String timePast = timeago.format(postedAt);
     createdBy = postDeets.group;
@@ -297,26 +289,27 @@ class _PostListState extends State<PostList>
     return GestureDetector(
       onTap: () {
         if (postDeets.venue == null) {
-          if((index)<(totPost-PostList.totReadPost)){
-          _counting.totPostEventCount((totPost-index), 1);
+          if ((index ?? 0) < ((totPost ?? 0) - (PostList.totReadPost ?? 0))) {
+            _counting.totPostEventCount(((totPost ?? 0) - (index ?? 0)), 1);
           }
           Navigator.of(context)
               .pushNamed(Posts.routeName, arguments: postDeets);
         } else {
-          if((index)<(totEvent-PostList.totReadEvent)){
-          _counting.totPostEventCount((totEvent-index), 2);
+          if ((index) < ((totEvent ?? 0) - (PostList.totReadEvent ?? 0))) {
+            _counting.totPostEventCount(((totEvent ?? 0) - (index ?? 0)), 2);
           }
 
-          Navigator.of(context).pushNamed(Events.routeName, arguments: postDeets);
+          Navigator.of(context)
+              .pushNamed(Events.routeName, arguments: postDeets);
         }
       },
       child: Container(
         child: Card(
-          color: selected?Color(0xFFf0f3f4):Colors.white,
+          color: selected ? Color(0xFFf0f3f4) : Colors.white,
           elevation: 3,
           shape: new RoundedRectangleBorder(
-                  side: new BorderSide(color: Colors.white, width: 2.0),
-                  borderRadius: BorderRadius.circular(4.0)),
+              side: new BorderSide(color: Colors.white, width: 2.0),
+              borderRadius: BorderRadius.circular(4.0)),
           child: Container(
             padding: EdgeInsets.fromLTRB(11, 18, 17, 16),
             child: Row(
@@ -394,7 +387,12 @@ class _PostListState extends State<PostList>
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
-                      child: selected?Icon(Icons.markunread,color: Colors.blue,):Icon(Icons.done,color:Colors.blue),
+                      child: selected
+                          ? Icon(
+                              Icons.markunread,
+                              color: Colors.blue,
+                            )
+                          : Icon(Icons.done, color: Colors.blue),
                     ),
                   ],
                 )
@@ -407,27 +405,28 @@ class _PostListState extends State<PostList>
     );
   }
 }
-class Counting{
+
+class Counting {
   Auth auth = new Auth();
   var document;
-  FirebaseUser user;
+  User user;
   var uid;
-  Future beReady() async{
-    FirebaseUser user = await auth.getCurrentUser();
+  Future beReady() async {
+    User user = auth.getCurrentUser();
     uid = user.uid;
-    document = await Firestore.instance.collection('users').document(uid);
+    document = await FirebaseFirestore.instance.collection('users').doc(uid);
     await document.get().then((value) {
-      PostList.totReadEvent = value.data["readEvent"];
-      PostList.totReadPost = value.data["readPost"];
-
+      PostList.totReadEvent = value.data()["readEvent"];
+      PostList.totReadPost = value.data()["readPost"];
     });
   }
+
   Future totPostEventCount(int x, int update) async {
     if (update == 1) {
-    document.updateData({"readPost": x});
-  } else if (update == 2) {
-    document.updateData({"readEvent": x});
-  }
+      document.update({'readPost': x});
+    } else if (update == 2) {
+      document.update({'readEvent': x});
+    }
     beReady();
   }
 }

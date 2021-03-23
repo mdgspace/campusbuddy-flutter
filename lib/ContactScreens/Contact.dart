@@ -29,7 +29,6 @@ class Contact extends StatelessWidget {
   );
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, allowFontScaling: true, width: 410, height: 703);
     if (passToContact.office != "") {
       emailAndPhoneNo.add(passToContact.office);
       subHeadings.add("Office | Main");
@@ -42,116 +41,120 @@ class Contact extends StatelessWidget {
       emailAndPhoneNo.add(passToContact.email + "@iitr.ac.in");
       subHeadings.add("IITR Email");
     }
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: color,
-          elevation: 0,
-          actions: [
-            /*IconButton(
-              icon: svgIconAdd,
-              onPressed: () {},
-            )*/
-          ],
-        ),
-        body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Container(
-            color: color,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Padding(
-                      padding: EdgeInsets.all(10),
-                      child: svgIcon,
+    return ScreenUtilInit(
+      designSize: Size(410,703),
+      allowFontScaling: true,
+      builder: ()=>Scaffold(
+          appBar: AppBar(
+            backgroundColor: color,
+            elevation: 0,
+            actions: [
+              /*IconButton(
+                icon: svgIconAdd,
+                onPressed: () {},
+              )*/
+            ],
+          ),
+          body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Container(
+              color: color,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: svgIcon,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(width: 4.w, color: Colors.white),
+                        color: color,
+                      ),
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(width: 4.w, color: Colors.white),
-                      color: color,
+                    SizedBox(
+                      height: 9.2.h,
                     ),
-                  ),
-                  SizedBox(
-                    height: 9.2.h,
-                  ),
-                  Text(
-                    passToContact.name,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: ScreenUtil().setSp(20),
-                      fontWeight: FontWeight.bold,
+                    Text(
+                      passToContact.name,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: ScreenUtil().setSp(20),
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.left,
                     ),
-                    textAlign: TextAlign.left,
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Text(
-                    passToContact.department,
-                    style: TextStyle(
-                        color: Colors.white, fontSize: ScreenUtil().setSp(17)),
-                  ),
-                  SizedBox(
-                    height: 22.h,
-                  ),
-                  Text(
-                    passToContact.sub,
-                    style: TextStyle(
-                        color: Colors.white, fontSize: ScreenUtil().setSp(17)),
-                  ),
-                  SizedBox(
-                    height: 9.h,
-                  ),
-                ],
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    Text(
+                      passToContact.department,
+                      style: TextStyle(
+                          color: Colors.white, fontSize: ScreenUtil().setSp(17)),
+                    ),
+                    SizedBox(
+                      height: 22.h,
+                    ),
+                    Text(
+                      passToContact.sub,
+                      style: TextStyle(
+                          color: Colors.white, fontSize: ScreenUtil().setSp(17)),
+                    ),
+                    SizedBox(
+                      height: 9.h,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Flexible(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(13.5, 8.5, 13.5, 0),
-              child: new ListView.builder(
-                  itemCount: emailAndPhoneNo.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: () {
-                        if (subHeadings[index] == "IITR Email") {
-                          _makeEmail(emailAndPhoneNo[index]);
-                        } else {
-                          String tell = emailAndPhoneNo[index];
-                          _launched = _makePhoneCall('tel:$tell');
-                        }
-                      },
-                      child: new Card(
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(12, 16, 0, 16),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                emailAndPhoneNo[index],
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: ScreenUtil().setSp(20)),
-                              ),
-                              SizedBox(
-                                height: 5.25.h,
-                              ),
-                              Text(
-                                subHeadings[index],
-                                style: TextStyle(
-                                    color: Colors.black38,
-                                    fontSize: ScreenUtil().setSp(17.52)),
-                              ),
-                            ],
+            Flexible(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(13.5, 8.5, 13.5, 0),
+                child: new ListView.builder(
+                    itemCount: emailAndPhoneNo.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        onTap: () {
+                          if (subHeadings[index] == "IITR Email") {
+                            _makeEmail(emailAndPhoneNo[index]);
+                          } else {
+                            String tell = emailAndPhoneNo[index];
+                            _launched = _makePhoneCall('tel:$tell');
+                          }
+                        },
+                        child: new Card(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(12, 16, 0, 16),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  emailAndPhoneNo[index],
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: ScreenUtil().setSp(20)),
+                                ),
+                                SizedBox(
+                                  height: 5.25.h,
+                                ),
+                                Text(
+                                  subHeadings[index],
+                                  style: TextStyle(
+                                      color: Colors.black38,
+                                      fontSize: ScreenUtil().setSp(17.52)),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
+                      );
+                    }),
+              ),
             ),
-          ),
-        ]));
+          ])),
+    );
   }
 
   Future<void> _makePhoneCall(String url) async {
