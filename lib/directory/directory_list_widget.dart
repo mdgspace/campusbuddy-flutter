@@ -1,3 +1,4 @@
+import 'package:campusbuddy/directory/directory_data.dart';
 import 'package:campusbuddy/screens/department_list.dart';
 import 'package:campusbuddy/search_feature/model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,33 +17,17 @@ class DirectoryList extends StatefulWidget {
 class _DirectoryListState extends State<DirectoryList> {
   Auth auth = new Auth();
 
-  List<Contact> contactList = [];
-
   @override
   void initState() {
     super.initState();
     print('went here');
     loadData();
-    print('data loaded');
   }
 
-  void loadData() async {
-    var url = Uri.parse('https://raw.githubusercontent.com/mdg-iitr/CampusBuddy/master/app/src/main/assets/contacts.min.json');
-    var response = await http.get(url);
-    final jsonResponse = groupsFromJson(response.body);
-    for (int i = 0; i < jsonResponse.length; i++) {
-      List<Department> departmentList = jsonResponse[i].depts;
-      for (int j = 0; j < departmentList.length; j++) {
-        for (int k = 0; k < departmentList[j].contacts.length; k++) {
-          departmentList[j].contacts[k].department_name =
-              departmentList[j].deptName;
-        }
-        contactList = contactList + departmentList[j].contacts;
-      }
-    }
-  }
+
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       elevation: 1,
@@ -77,6 +62,7 @@ class _DirectoryListState extends State<DirectoryList> {
 
   @override
   Widget build(BuildContext context) {
+
     return CustomScrollView(
       slivers: <Widget>[
         SliverAppBar(
@@ -97,7 +83,7 @@ class _DirectoryListState extends State<DirectoryList> {
                   // showConfirmationDialog(context);
                   showSearch(
                     context: context,
-                    delegate: CustomSearchDelegate(contactList: contactList),
+                    delegate: CustomSearchDelegate(),
                   );
                 }),
           ],

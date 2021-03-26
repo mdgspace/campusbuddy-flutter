@@ -1,12 +1,9 @@
-import 'package:campusbuddy/ContactScreens/ContactList.dart';
+import 'package:campusbuddy/directory/directory_data.dart';
 import 'package:campusbuddy/search_feature/contact_view.dart';
 import 'package:flutter/material.dart';
 import 'model.dart';
 
 class CustomSearchDelegate extends SearchDelegate {
-  final List<Contact> contactList;
-
-  CustomSearchDelegate({this.contactList});
 
   @override
   List<Widget> buildActions(BuildContext context) {
