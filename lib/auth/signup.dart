@@ -263,7 +263,7 @@ class _SignupPageState extends State<SignupPage> {
             bottom: ScreenUtil().setWidth(70)),
         child: SizedBox(
           //height: 45.0,
-            child: new FlatButton(
+            child: new TextButton(
                //onPressed: validateAndSubmit,
                onPressed: ()
               {
@@ -313,15 +313,15 @@ class _SignupPageState extends State<SignupPage> {
                   }
 
               },
-
-              shape: new RoundedRectangleBorder(
+              style: TextButton.styleFrom(shape: new RoundedRectangleBorder(
                 side: BorderSide(
                     color: Colors.white,
                     style: BorderStyle.solid,
                     width: 1
                 ),
                 borderRadius: new BorderRadius.circular(30.0),
-              ),
+              ),),
+
               child: Container(
                 padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(5),
                   ScreenUtil().setWidth(8),
@@ -376,18 +376,19 @@ class _SignupPageState extends State<SignupPage> {
             bottom: ScreenUtil().setWidth(70)),
         child: SizedBox(
           //height: 45.0,
-            child: new FlatButton(
+            child: new TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              shape: new RoundedRectangleBorder(
+              style: TextButton.styleFrom(shape: new RoundedRectangleBorder(
                 side: BorderSide(
                     color: Colors.white,
                     style: BorderStyle.solid,
                     width: 1
                 ),
                 borderRadius: new BorderRadius.circular(30.0),
-              ),
+              ),),
+
               child: Container(
                 padding: EdgeInsets.fromLTRB(ScreenUtil().setWidth(5),
                   ScreenUtil().setWidth(8),
@@ -466,7 +467,7 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   ),
                 ),
-                FlatButton(
+                TextButton(
                   onPressed: ()
                   {
                     Navigator.push(context,MaterialPageRoute(builder: (BuildContext context) =>Login(auth: widget.auth,

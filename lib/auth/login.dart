@@ -464,7 +464,7 @@ class _LoginState extends State<Login> {
                         alignment: Alignment.center,
                         child: Padding(
                           padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
-                          child: FlatButton(
+                          child: TextButton(
                             onPressed: () {
                               if (EmailValidator.validate(emailReset)) {
                                 widget.auth.resetPassword(emailReset);
@@ -492,7 +492,9 @@ class _LoginState extends State<Login> {
                                   fontSize: ScreenUtil()
                                       .setSp(16, allowFontScalingSelf: true)),
                             ),
-                            color: Color(0xFF303E84),
+                            style: TextButton.styleFrom(
+                              primary: Color(0xFF303E84),
+                            ),
                           ),
                         )),
                   ],

@@ -167,7 +167,7 @@ class _DirectoryListState extends State<DirectoryList> {
                               ModalRoute.withName('/'));
                         },
                       ),
-                      FlatButton(
+                      TextButton(
                         child: Text(
                           'no',
                           style: TextStyle(color: Colors.blue),
