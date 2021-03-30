@@ -150,7 +150,7 @@ class _DirectoryListState extends State<DirectoryList> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      FlatButton(
+                      TextButton(
                         child: Text(
                           'yes',
                           style: TextStyle(
