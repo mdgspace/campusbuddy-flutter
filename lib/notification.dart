@@ -49,7 +49,6 @@ class _ScheduleNotificationState extends State<ScheduleNotification> {
           primary: Colors.indigo[700],
           onPrimary: Colors.white,
           elevation: 3,
-          visualDensity: VisualDensity(horizontal: 6.0, vertical: 6.0),
         ),
         onPressed: () async => Alertdialog(),
         child: Row(
