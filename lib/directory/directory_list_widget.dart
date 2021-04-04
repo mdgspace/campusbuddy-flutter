@@ -150,7 +150,7 @@ class _DirectoryListState extends State<DirectoryList> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      FlatButton(
+                      TextButton(
                         child: Text(
                           'yes',
                           style: TextStyle(
@@ -167,7 +167,7 @@ class _DirectoryListState extends State<DirectoryList> {
                               ModalRoute.withName('/'));
                         },
                       ),
-                      FlatButton(
+                      TextButton(
                         child: Text(
                           'no',
                           style: TextStyle(color: Colors.blue),

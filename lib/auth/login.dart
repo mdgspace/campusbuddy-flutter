@@ -254,13 +254,13 @@ class _LoginState extends State<Login> {
             bottom: ScreenUtil().setWidth(50)),
         child: SizedBox(
             //height: 45.0,
-            child: new FlatButton(
+            child: new TextButton(
           onPressed: validateAndSubmit,
-          shape: new RoundedRectangleBorder(
+          style: TextButton.styleFrom(shape: new RoundedRectangleBorder(
             side: BorderSide(
                 color: Colors.white, style: BorderStyle.solid, width: 1),
             borderRadius: new BorderRadius.circular(30.0),
-          ),
+          ),),
           child: Container(
             padding: EdgeInsets.fromLTRB(
               ScreenUtil().setWidth(5),
@@ -289,7 +289,7 @@ class _LoginState extends State<Login> {
         left: ScreenUtil().setWidth(80),
         right: ScreenUtil().setWidth(80),
       ),
-      child: FlatButton(
+      child: TextButton(
         onPressed: () {
           showEnterEmailDialog();
         },
@@ -313,12 +313,12 @@ class _LoginState extends State<Login> {
           right: ScreenUtil().setWidth(120),
           top: ScreenUtil().setWidth(20),
         ),
-        child: FlatButton(
-          shape: new RoundedRectangleBorder(
+        child: TextButton(
+          style: TextButton.styleFrom(shape: new RoundedRectangleBorder(
             side: BorderSide(
                 color: Colors.white, style: BorderStyle.solid, width: 1),
             borderRadius: new BorderRadius.circular(30.0),
-          ),
+          ),),
           onPressed: () {
             Navigator.push(
               context,
@@ -464,7 +464,7 @@ class _LoginState extends State<Login> {
                         alignment: Alignment.center,
                         child: Padding(
                           padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
-                          child: FlatButton(
+                          child: TextButton(
                             onPressed: () {
                               if (EmailValidator.validate(emailReset)) {
                                 widget.auth.resetPassword(emailReset);
@@ -492,7 +492,9 @@ class _LoginState extends State<Login> {
                                   fontSize: ScreenUtil()
                                       .setSp(16, allowFontScalingSelf: true)),
                             ),
-                            color: Color(0xFF303E84),
+                            style: TextButton.styleFrom(
+                              primary: Color(0xFF303E84),
+                            ),
                           ),
                         )),
                   ],
@@ -533,7 +535,7 @@ class _LoginState extends State<Login> {
                         alignment: Alignment.bottomCenter,
                         child: Padding(
                           padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
-                          child: FlatButton(
+                          child: TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                               Navigator.push(
@@ -551,7 +553,7 @@ class _LoginState extends State<Login> {
                                   fontSize: ScreenUtil()
                                       .setSp(16, allowFontScalingSelf: true)),
                             ),
-                            color: Color(0xFF303E84),
+                            style: TextButton.styleFrom(primary: Color(0xFF303E84),),
                           ),
                         )),
                   ],

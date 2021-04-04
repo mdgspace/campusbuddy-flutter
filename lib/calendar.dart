@@ -37,9 +37,11 @@ class _CalendarState extends State<Calendar> {
 
     return  Container(
       height: 60,
-          child: RaisedButton(
-            elevation: 6,
-            color: indigo,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              elevation: 6,
+              primary: Colors.indigo,
+            ),
 
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -58,7 +60,7 @@ class _CalendarState extends State<Calendar> {
             onPressed: () {
 
               Add2Calendar.addEvent2Cal(event).then((success) {
-                scaffoldState.currentState.showSnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(success ? 'Success' : 'Error')));
               });
 
