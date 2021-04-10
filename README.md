@@ -13,8 +13,7 @@ Campus Buddy is an assistant who helps you search Telephone Directory of IIT Roo
 ## 💥Features
 
  - **Contacts**- Access complete telephone directory of IITR. User may call, mail and save contact directly using this feature
- - **Notices**- Campus Buddy will show facebook feeds of all the campus groups relevant to user. Campus Buddy also notifies user when anything new comes on these pages
- 
+ - **Notices**-  Lecture and event posting features for groups with proper notification and response systems for students.
 
 ## 🤝How to Contribute
 
