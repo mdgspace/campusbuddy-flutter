@@ -8,7 +8,7 @@
 
 ## ✨Overview
 
-Campus Buddy is an assistant who helps you search Telephone Directory of IIT Roorkee and keeps you updated with the facebook feed of campus groups at IIT Roorkee.
+Campus Buddy is an assistant who helps you search Telephone Directory of IIT Roorkee. It also keeps you updated with the events at R-Land and one can even add them to their calendar.
 
 ## 💥Features
 
