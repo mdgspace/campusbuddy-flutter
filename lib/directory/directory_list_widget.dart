@@ -80,6 +80,9 @@ class _DirectoryListState extends State<DirectoryList> {
     return CustomScrollView(
       slivers: <Widget>[
         SliverAppBar(
+          floating: true,
+          pinned: true,
+          snap: true,
           backgroundColor: Colors.indigo[800],
           title: Text("Telephone Directory"),
           actions: <Widget>[
