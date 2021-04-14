@@ -178,9 +178,6 @@ class ContactList extends StatelessWidget {
                         childCount: snapshot.data.docs.length,
                       ),
                     ),
-                    SliverFillRemaining(
-                      child: Text(""),
-                    )
                   ],
                 );
           }
