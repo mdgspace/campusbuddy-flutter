@@ -26,7 +26,7 @@ class ContactView extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 5.0),
                   child: Text(
-                    '$value',
+                    '$value'??'',
                     style: TextStyle(
                       fontSize: 17,
                     ),
@@ -35,7 +35,7 @@ class ContactView extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 5.0),
                   child: Text(
-                    '$label',
+                    '$label'??'',
                     style: TextStyle(fontSize: 17, color: Color(0xFF838383)),
                   ),
                 ),
@@ -103,7 +103,7 @@ class ContactView extends StatelessWidget {
                  height: 9.2,
                ),
                Text(
-                 contact.name,
+                 contact.name??'',
                  style: TextStyle(
                    color: Colors.white,
                    fontSize:20,
@@ -115,7 +115,7 @@ class ContactView extends StatelessWidget {
                  height: 20,
                ),
                Text(
-                 contact.department_name,
+                 contact.department_name??'',
                  style: TextStyle(
                      color: Colors.white, fontSize: 17),
                ),
@@ -123,7 +123,7 @@ class ContactView extends StatelessWidget {
                  height: 22,
                ),
                Text(
-                 contact.desg,
+                 contact.desg??'',
                  style: TextStyle(
                      color: Colors.white, fontSize: 17),
                ),
