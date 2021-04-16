@@ -8,6 +8,8 @@ import 'package:campusbuddy/auth/auth.dart';
 import 'package:campusbuddy/search_feature/search_view.dart';
 import 'package:http/http.dart' as http;
 
+import 'directory_data.dart';
+
 class DirectoryList extends StatefulWidget {
   @override
   _DirectoryListState createState() => _DirectoryListState();
@@ -16,30 +18,11 @@ class DirectoryList extends StatefulWidget {
 class _DirectoryListState extends State<DirectoryList> {
   Auth auth = new Auth();
 
-  List<Contact> contactList = [];
-
   @override
   void initState() {
     super.initState();
     print('went here');
     loadData();
-    print('data loaded');
-  }
-
-  void loadData() async {
-    var url = Uri.parse('https://raw.githubusercontent.com/mdg-iitr/CampusBuddy/master/app/src/main/assets/contacts.min.json');
-    var response = await http.get(url);
-    final jsonResponse = groupsFromJson(response.body);
-    for (int i = 0; i < jsonResponse.length; i++) {
-      List<Department> departmentList = jsonResponse[i].depts;
-      for (int j = 0; j < departmentList.length; j++) {
-        for (int k = 0; k < departmentList[j].contacts.length; k++) {
-          departmentList[j].contacts[k].department_name =
-              departmentList[j].deptName;
-        }
-        contactList = contactList + departmentList[j].contacts;
-      }
-    }
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
@@ -100,7 +83,7 @@ class _DirectoryListState extends State<DirectoryList> {
                   // showConfirmationDialog(context);
                   showSearch(
                     context: context,
-                    delegate: CustomSearchDelegate(contactList: contactList),
+                    delegate: CustomSearchDelegate(),
                   );
                 }),
           ],
