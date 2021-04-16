@@ -9,7 +9,7 @@ import 'package:campusbuddy/post_screen/posts.dart';
 import 'package:campusbuddy/screens/department_list.dart';
 import 'post_screen/events.dart';
 import 'package:flutter/material.dart';
-
+import 'package:campusbuddy/directory/chat_screen.dart';
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -47,7 +47,10 @@ class RouteGenerator {
         final Deets deets = settings.arguments;
         return MaterialPageRoute(
             builder: (_) => Posts(deets));
-      default:
+      case ChatScreen.routeName:
+        return MaterialPageRoute(
+            builder: (_) => ChatScreen());
+        default:
         return MaterialPageRoute(builder: (_) => Blank());
     }
   }
