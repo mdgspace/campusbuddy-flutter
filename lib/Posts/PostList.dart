@@ -206,7 +206,9 @@ class _PostListState extends State<PostList>
                       null,
                       snapshot.data.docs[index]['description'],
                       snapshot.data.docs[index]['image'],
-                      snapshot.data.docs[index]['created_by']);
+                      snapshot.data.docs[index]['created_by'],
+                      snapshot.data.docs[index]['latitude'],
+                      snapshot.data.docs[index]['longitude']);
                   return dropdownValue == "None"
                       ? getCard(postDeets, postedAt, postSelect, index)
                       : (dropdownValue == postDeets.group)
@@ -254,7 +256,9 @@ class _PostListState extends State<PostList>
                       snapshot.data.docs[index]['venue'],
                       snapshot.data.docs[index]['description'],
                       snapshot.data.docs[index]['image'],
-                      snapshot.data.docs[index]['created_by']);
+                      snapshot.data.docs[index]['created_by'],
+                      snapshot.data.docs[index]['longitude'],
+                      snapshot.data.docs[index]['latitude']);
 
                   if (totEvent > bets && bets != 0) {
                     eventSelect = true;
