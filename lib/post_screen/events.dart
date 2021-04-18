@@ -6,12 +6,15 @@ import 'package:campusbuddy/notification.dart';
 import 'package:campusbuddy/calendar.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'dart:async';
+import 'gmaps.dart';
 
 //Class that fetches and stores all details of added Events and Posts from Firestore.
 class Deets {
   String title, venue, desc, imgURL, group;
+  double longitude, latitude; //in console use double values, i.e: use 2.0 not 2
   DateTime time;
-  Deets(this.title, this.time, this.venue, this.desc, this.imgURL, this.group);
+  Deets(this.title, this.time, this.venue, this.desc, this.imgURL, this.group,
+      this.longitude, this.latitude);
 }
 
 class Events extends StatefulWidget {
@@ -41,34 +44,34 @@ class _EventsState extends State<Events> {
             expandedHeight: 210.0,
             backgroundColor: indigo,
             flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
-                  child: Text(
-                    '${deets.group}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Roboto',
-                      color: Colors.white,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+              centerTitle: true,
+              title: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
+                child: Text(
+                  '${deets.group}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Roboto',
+                    color: Colors.white,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                background: Center(
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: (deets.imgURL == null || deets.imgURL == '')
-                        ? new BoxDecoration()
-                        : new BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: new DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(deets.imgURL),
-                            )),
-                  ),
+              ),
+              background: Center(
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: (deets.imgURL == null || deets.imgURL == '')
+                      ? new BoxDecoration()
+                      : new BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: new DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(deets.imgURL),
+                          )),
                 ),
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -126,6 +129,19 @@ class _EventsState extends State<Events> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // print(deets.latitude);
+          // print(deets.longitude);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Gmaps(
+                      latitude: deets.latitude, longitude: deets.longitude)));
+        },
+        label: const Text('Map'),
+        icon: const Icon(Icons.map),
       ),
       bottomNavigationBar: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
